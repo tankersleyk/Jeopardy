@@ -6,11 +6,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
  * A parser that reads in csv files of Jeopardy questions of the form
- *          Show number, Air date, Round (Jeopardy, Double Jeopardy, etc.), Category (in quotes),
+ *          Show number, Air date (YYYY-MM-DD), Round (Jeopardy, Double Jeopardy, etc.), Category (in quotes),
  *           Value ("$xxx"), Question (in quotes), Answer (in quotes)
  *
  */
@@ -19,10 +22,11 @@ public class QuestionParser {
     /**
      * Parses a csv file of jeopardy questions
      * @param file the csv file to be parsed
-     * @return the list of Questions in the file
+     * @param round the game round to get questions from
+     * @return the list of Questions in the file that much the given round
      * @throws IOException if the file could not be read
      */
-    public static List<Question> parse(File file) throws IOException {
+    public static List<Question> parse(File file, Round gameRound) throws IOException {
         List<Question> questions = new ArrayList<>();
         BufferedReader br = new BufferedReader(new FileReader(file));
         
@@ -31,7 +35,14 @@ public class QuestionParser {
         while ((st = br.readLine()) != null) {
             List<String> info = Arrays.asList(st.split(",(?=(?:[^\\\"]*\\\"[^\\\"]*\\\")*[^\\\"]*$)")); // Split on commas, but not within quotes
             int showNumber = Integer.parseInt(info.get(0));
-            String date = info.get(1);
+            String dateString = info.get(1);
+            
+            List<String> dateInfo = Arrays.asList(dateString.split("-"));
+            int year = Integer.parseInt(dateInfo.get(0));
+            int month = Integer.parseInt(dateInfo.get(1));
+            int day = Integer.parseInt(dateInfo.get(2));
+            Calendar date = new GregorianCalendar(year, month-1, day);
+            
             String rounds = info.get(2);
             String category = info.get(3);
             int value = 0;
@@ -57,7 +68,9 @@ public class QuestionParser {
                                          break;
             }
             
-            questions.add(new Question(round, category, question, answer, value));
+            if (gameRound.equals(round)) {
+                questions.add(new Question(round, category, date, question, answer, value));
+            }
         }
         
         System.out.println("Done!");

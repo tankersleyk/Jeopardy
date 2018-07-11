@@ -1,16 +1,22 @@
 package jeopardy;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 /**
  * A Jeopardy! question
  *
  */
 public class Question {
     
-    final Round round;
-    final String category;
-    final String question;
-    final String answer;
-    final int points;
+    private final Round round;
+    private final String category;
+    private final Calendar date;
+    private final String question;
+    private final String answer;
+    private final int points;
+    private static final Calendar pointChange = new GregorianCalendar(2001, 10, 26);
     
     /**
      * Create a new Question
@@ -20,12 +26,60 @@ public class Question {
      * @param answer the answer to the question
      * @param points the value of the question in USD
      */
-    public Question(Round round, String category, String question, String answer, int points) {
+    public Question(Round round, String category, Calendar date, String question, String answer, int points) {
         this.round = round;
         this.category = category;
+        this.date = date;
         this.question = question;
         this.answer = answer;
-        this.points = points;
+        if (date.before(pointChange.getTime())) { // On November 26, 2001 point values were doubled
+            this.points = points * 2;
+        }
+        else {
+            this.points = points;
+        }
+    }
+    
+    /**
+     * TODO
+     */
+    public Round getRound() {
+        return this.round;
+    }
+    
+    /**
+     * TODO
+     */
+    public String getCategory() {
+        return this.category;
+    }
+    
+    /**
+     * TODO
+     */
+    public Date getDate() {
+        return this.date.getTime();
+    }
+    
+    /**
+     * TODO
+     */
+    public String getQuestion() {
+        return this.question;
+    }
+    
+    /**
+     * TODO
+     */
+    public String getAnswer() {
+        return this.answer;
+    }
+    
+    /**
+     * TODO
+     */
+    public int getPoints() {
+        return this.points;
     }
     
     /**
