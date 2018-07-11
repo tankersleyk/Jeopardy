@@ -8,14 +8,14 @@ import java.awt.event.MouseEvent;
  *
  */
 public interface GameState {
-    
+
     /**
      * Draw the appropriate graphics based on this game state
      * 
      * @param g The graphics to draw this game state onto
      */
     public void drawGraphics(Graphics2D g);
-    
+
     /**
      * Handle a player's click
      * @param me the information about the mouse click

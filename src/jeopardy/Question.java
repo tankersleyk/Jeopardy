@@ -9,7 +9,7 @@ import java.util.GregorianCalendar;
  *
  */
 public class Question {
-    
+
     private final Round round;
     private final String category;
     private final Calendar date;
@@ -17,7 +17,7 @@ public class Question {
     private final String answer;
     private final int points;
     private static final Calendar pointChange = new GregorianCalendar(2001, 10, 26);
-    
+
     /**
      * Create a new Question
      * @param round the round (Jeopardy, Double Jeopardy, etc.) the question is from
@@ -39,49 +39,49 @@ public class Question {
             this.points = points;
         }
     }
-    
+
     /**
      * TODO
      */
     public Round getRound() {
         return this.round;
     }
-    
+
     /**
      * TODO
      */
     public String getCategory() {
         return this.category;
     }
-    
+
     /**
      * TODO
      */
     public Date getDate() {
         return this.date.getTime();
     }
-    
+
     /**
      * TODO
      */
     public String getQuestion() {
         return this.question;
     }
-    
+
     /**
      * TODO
      */
     public String getAnswer() {
         return this.answer;
     }
-    
+
     /**
      * TODO
      */
     public int getPoints() {
         return this.points;
     }
-    
+
     /**
      * Decides if a guess is correct
      * @param guess the contestant's guess 

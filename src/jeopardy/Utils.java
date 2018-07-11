@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
 public final class Utils {
-    
+
     /**
      * Draw a string that is centered in some given rectangle
      * @param g the graphics to draw the string on

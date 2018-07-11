@@ -12,10 +12,10 @@ import java.util.List;
  *
  */
 public class MainMenu implements GameState {
-    
+
     private final List<MenuButton> buttons;
     private final Game parentGame;
-    
+
     /**
      * Create a main menu for the Jeopardy game
      * @param game the Game object for this Jeopardy game
@@ -42,11 +42,11 @@ public class MainMenu implements GameState {
     @Override
     public void drawGraphics(Graphics2D g) {
         g.setColor(Color.BLUE);
-        
+
         Rectangle2D singleRect = new Rectangle2D.Double(250, 200, 300, 100);
         g.fill(singleRect);
         Utils.drawCenteredString(g, "Single Player", singleRect, Color.BLACK);
-        
+
         Rectangle2D multiRect = new Rectangle2D.Double(250, 500, 300, 100);
         g.fill(multiRect);
         Utils.drawCenteredString(g, "Multi Player", multiRect, Color.BLACK);
@@ -59,6 +59,6 @@ public class MainMenu implements GameState {
                 button.isClicked();
             }
         }
-        
+
     }
 }
