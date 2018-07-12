@@ -1,5 +1,6 @@
 package jeopardy;
 
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,6 @@ public class StateMachine {
      * @param states the states the machine can transition between
      */
     public static void instantiateStates(List<State> states) {
-
         StateMachine.states = new ArrayList<>();
         for (State state : states) {
             StateMachine.states.add(state);
@@ -50,5 +50,13 @@ public class StateMachine {
      */
     public static void update(float dt) {
         current.update(dt);
+    }
+
+    /**
+     * Draws the relevant graphics for the topmost state onto the Graphics2D object
+     * @param graphics the Graphics2D object to draw onto
+     */
+    public static void render(Graphics2D graphics) {
+        current.render(graphics);
     }
 }
