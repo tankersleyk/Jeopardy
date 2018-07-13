@@ -19,6 +19,16 @@ public class StateStack {
     }
 
     /**
+     * Push a new state onto this stack
+     * @param state the state to push onto the stack
+     * @param params the parameters relevant to this state
+     */
+    public synchronized static void push(State state, StateParams params) {
+        states.push(state);
+        state.enter(params);
+    }
+
+    /**
      * Update the topmost state in the stack
      * @param dt the time (in seconds) since the last frame
      */
