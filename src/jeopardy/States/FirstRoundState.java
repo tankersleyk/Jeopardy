@@ -1,9 +1,9 @@
-package jeopardy;
+package jeopardy.States;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,23 +16,21 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-/**
- * A round of the game (Jeopardy, Double Jeopardy)
- *
- */
-public class GameRound implements GameState {
+import jeopardy.Question;
+import jeopardy.QuestionParser;
+import jeopardy.Round;
+import jeopardy.StateParams;
+import jeopardy.Utils;
 
-    private final Round round;
+public class FirstRoundState extends BaseState{
+
+    private static FirstRoundState instance = null;
+    private final Round round = Round.JEOPARDY;
     private Map<String, Map<Integer, Question>> questions;
 
     private final File questionFile = new File("data/questions.csv");
 
-    /**
-     * Create a new game round
-     * @param round the round to be implemented (Jeopardy, Double Jeopardy)
-     */
-    public GameRound(Round round) {
-        this.round = round;
+    private FirstRoundState() {
         List<Question> allQuestions;
         try {
             allQuestions = QuestionParser.parse(questionFile, round);
@@ -68,28 +66,45 @@ public class GameRound implements GameState {
         }
     }
 
+    /**
+     * Get the instance of this first round
+     * 
+     * @return instance the singleton FirstRoundState object
+     */
+    public static FirstRoundState getInstance() {
+        if (instance == null) {
+            instance = new FirstRoundState();
+        }
+
+        return instance;
+    }
+
     @Override
-    public void drawGraphics(Graphics2D g) {
-        final Color oldColor = g.getColor();
-        g.setColor(Color.BLUE);
+    public void render(Graphics2D graphics) {
+        // Use temporary image to draw everything all at once to graphcis and prevent flickering
+        BufferedImage tmpImage = new BufferedImage(800, 800, BufferedImage.TYPE_4BYTE_ABGR);
+        Graphics2D tmpGraphics = (Graphics2D) tmpImage.getGraphics();
+
+        tmpGraphics.setColor(Color.BLUE);
         List<String> categoryList = new ArrayList<>();
         for (String category : questions.keySet()) {
             categoryList.add(category);
         }
-        for (int i = 0; i < categoryList.size(); i++) {
+        for (int i = 0; i < categoryList.size(); i++) { // Categories
             Rectangle2D categoryBox = new Rectangle2D.Double(i*(800/5), 0, 800/5, 800/6);
-            g.fill(categoryBox);
-            Utils.drawCenteredString(g, categoryList.get(i), categoryBox, Color.WHITE);
+            tmpGraphics.fill(categoryBox);
+            Utils.drawCenteredString(tmpGraphics, categoryList.get(i), categoryBox, Color.WHITE);
 
-            for (int value = 1; value <= 5; value++) {
+            for (int value = 1; value <= 5; value++) { // Question values
                 Rectangle2D valueBox = new Rectangle2D.Double(i*(800/5), value*(800/6), 800/5, 800/6);
-                g.fill(valueBox);
-                Utils.drawCenteredString(g, Integer.toString(value*200), valueBox, Color.WHITE);
+                tmpGraphics.fill(valueBox);
+                Utils.drawCenteredString(tmpGraphics, Integer.toString(value*200), valueBox, Color.WHITE);
             }
         }
 
-        g.setColor(oldColor);
+        graphics.drawImage(tmpImage, null, 0, 0);
     }
+
 
     /**
      * Pulls 5 questions of increasing value from 5 distinct categories from a list of questions
@@ -100,7 +115,7 @@ public class GameRound implements GameState {
      */
     private Map<Integer, Question> pullQuestions(List<Question> questions, String category) {
         Map<Integer, Question> pulledQuestions = new HashMap<>();
-        Map<Integer, Integer> randomMap = new HashMap<Integer, Integer>() {{ // TODO: update for double jeopardy
+        Map<Integer, Integer> randomMap = new HashMap<Integer, Integer>() {{
             put(200, 0);
             put(400, 0);
             put(600, 0);
@@ -110,7 +125,7 @@ public class GameRound implements GameState {
         Random random = new Random();
 
         for (Question question : questions) {
-            if (question.getCategory().equals(category) && randomMap.containsKey(question.getPoints())) { //data uses values gained from daily doubles - remove most of those
+            if (question.getCategory().equals(category) && randomMap.containsKey(question.getPoints())) { // data uses values gained from daily doubles - remove most of those
                 int points = question.getPoints();
                 Calendar pointChange = new GregorianCalendar(2001, 10, 26);
                 randomMap.put(points, randomMap.get(points) + 1);
@@ -121,18 +136,5 @@ public class GameRound implements GameState {
         }
         return pulledQuestions;
     }
-
-    /**
-     * TODO
-     * 
-     */
-    private void drawQuestion(Graphics2D g, Question q) {
-        String category = q.getCategory();
-    }
-
-    @Override
-    public void handleClick(MouseEvent me) {
-    }
-
 
 }

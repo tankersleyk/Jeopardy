@@ -1,11 +1,12 @@
 package jeopardy.States;
 
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
 
 import jeopardy.StateParams;
 
 /**
- * A state to be used with the StateMachine singleton only
+ * A state to be used with the StateMachine or StateStack only
  *
  */
 public interface State {
@@ -25,6 +26,7 @@ public interface State {
     /**
      * Draws the relevant graphics for this state onto the Graphics2D object
      * @param graphics the Graphics2D object to draw onto
+     * @effects draws over the graphics object
      */
     public void render(Graphics2D graphics);
 
@@ -32,4 +34,10 @@ public interface State {
      * Called when the state is exited
      */
     public void exit();
+
+    /**
+     * Called when a click is found
+     * @param me the mouse event with the details of the mouse click
+     */
+    public void handleClick(MouseEvent me);
 }

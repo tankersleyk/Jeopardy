@@ -1,7 +1,7 @@
 package jeopardy;
 
 import java.awt.Graphics2D;
-import java.util.List;
+import java.awt.event.MouseEvent;
 import java.util.Stack;
 
 import jeopardy.States.State;
@@ -14,7 +14,7 @@ public class StateStack {
      * Push a new state onto this stack
      * @param state the state to push onto the stack
      */
-    public static void push(State state) {
+    public synchronized static void push(State state) {
         states.push(state);
     }
 
@@ -22,7 +22,7 @@ public class StateStack {
      * Update the topmost state in the stack
      * @param dt the time (in seconds) since the last frame
      */
-    public static void update(float dt) {
+    public synchronized static void update(float dt) {
         states.peek().update(dt);;
     }
 
@@ -31,7 +31,7 @@ public class StateStack {
      *  from the bottom-most item in the stack to the topmost
      * @param graphics the Graphics2D object to draw onto
      */
-    public static void render(Graphics2D graphics) {
+    public synchronized static void render(Graphics2D graphics) {
         for (State state : states) {
             state.render(graphics);
         }
@@ -40,7 +40,7 @@ public class StateStack {
     /**
      * Exits the current state and pops it off the stack
      */
-    public static void pop() {
+    public synchronized static void pop() {
         states.peek().exit();
         states.pop();
     }
@@ -48,9 +48,17 @@ public class StateStack {
     /**
      * Clears the stack WITHOUT triggering the exit functions of the states
      */
-    public static void clear() {
+    public synchronized static void clear() {
         while (!states.empty()) {
             states.pop();
         }
+    }
+
+    /**
+     * Has the top state handle the click event of a mouse
+     * @param me the mouse event with the details of the mouse click
+     */
+    public synchronized static void handleClick(MouseEvent me) {
+        states.peek().handleClick(me);
     }
 }
