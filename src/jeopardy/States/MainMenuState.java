@@ -21,14 +21,17 @@ public class MainMenuState extends BaseState{
 
     private static MainMenuState instance = null;
     private final List<MenuButton> buttons;
-    private static final BufferedImage background; // TODO: draw background + implement resizeImage in utils
+    private static final BufferedImage background;
+    private static final BufferedImage logo;
 
+    // TODO: probably split these try's
     static {
         try {
             background = ImageIO.read(new File("data/mmbackground.png"));
+            logo = ImageIO.read(new File("data/logo.png"));
         }
         catch (IOException e) {
-            throw new RuntimeException("Failed to read in background image");
+            throw new RuntimeException("Failed to read in images");
         }
     }
 
@@ -77,15 +80,17 @@ public class MainMenuState extends BaseState{
 
         tmpGraphics.drawImage(Utils.resizeImage(background, 800, 800), null, 0, 0);
 
-        tmpGraphics.setColor(Color.BLUE);
+        tmpGraphics.drawImage(Utils.resizeImage(logo, 400, 100), null, 200, 50);
+
+        tmpGraphics.setColor(Utils.BLUE);
 
         Rectangle2D singleRect = new Rectangle2D.Double(250, 200, 300, 100);
         tmpGraphics.fill(singleRect);
-        Utils.drawCenteredString(tmpGraphics, "Single Player", singleRect, Color.BLACK);
+        Utils.drawCenteredString(tmpGraphics, "Single Player", singleRect, Color.WHITE);
 
         Rectangle2D multiRect = new Rectangle2D.Double(250, 500, 300, 100);
         tmpGraphics.fill(multiRect);
-        Utils.drawCenteredString(tmpGraphics, "Multi Player", multiRect, Color.BLACK);
+        Utils.drawCenteredString(tmpGraphics, "Multi Player", multiRect, Color.WHITE);
 
         graphics.drawImage(tmpImage, null, 0, 0);
     }

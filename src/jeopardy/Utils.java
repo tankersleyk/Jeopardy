@@ -9,6 +9,9 @@ import java.awt.image.BufferedImage;
 
 public final class Utils {
 
+    public final static Color BLUE = Color.getHSBColor(232f/360f, .97f, .45f);
+    public final static Color ORANGE = Color.getHSBColor(.1f, .64f, .83f);
+
     /**
      * Draw a string that is centered in some given rectangle
      * @param g the graphics to draw the string on

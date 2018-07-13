@@ -82,7 +82,7 @@ public class FirstRoundState extends BaseState{
         BufferedImage tmpImage = new BufferedImage(800, 800, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D tmpGraphics = (Graphics2D) tmpImage.getGraphics();
 
-        tmpGraphics.setColor(Color.BLUE);
+        tmpGraphics.setColor(Utils.BLUE);
         List<String> categoryList = new ArrayList<>();
         for (String category : questions.keySet()) {
             categoryList.add(category);
@@ -95,7 +95,7 @@ public class FirstRoundState extends BaseState{
             for (int value = 1; value <= 5; value++) { // Question values
                 Rectangle2D valueBox = new Rectangle2D.Double(i*(800/5), value*(800/6), 800/5, 800/6);
                 tmpGraphics.fill(valueBox);
-                Utils.drawCenteredString(tmpGraphics, Integer.toString(value*200), valueBox, Color.WHITE);
+                Utils.drawCenteredString(tmpGraphics, "$" + Integer.toString(value*200), valueBox, Utils.ORANGE);
             }
         }
 
