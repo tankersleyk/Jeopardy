@@ -7,8 +7,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +17,6 @@ import java.util.Set;
 import jeopardy.Question;
 import jeopardy.QuestionParser;
 import jeopardy.Round;
-import jeopardy.StateParams;
 import jeopardy.Utils;
 
 public class FirstRoundState extends BaseState{
@@ -81,7 +78,7 @@ public class FirstRoundState extends BaseState{
 
     @Override
     public void render(Graphics2D graphics) {
-        // Use temporary image to draw everything all at once to graphcis and prevent flickering
+        // Use temporary image to draw everything all at once to graphics and prevent flickering
         BufferedImage tmpImage = new BufferedImage(800, 800, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D tmpGraphics = (Graphics2D) tmpImage.getGraphics();
 
@@ -113,6 +110,7 @@ public class FirstRoundState extends BaseState{
      *          one question of the corresponding category for each respective price TODO reword 
      * @return the randomly selected questions
      */
+    @SuppressWarnings("serial")
     private Map<Integer, Question> pullQuestions(List<Question> questions, String category) {
         Map<Integer, Question> pulledQuestions = new HashMap<>();
         Map<Integer, Integer> randomMap = new HashMap<Integer, Integer>() {{
@@ -127,7 +125,6 @@ public class FirstRoundState extends BaseState{
         for (Question question : questions) {
             if (question.getCategory().equals(category) && randomMap.containsKey(question.getPoints())) { // data uses values gained from daily doubles - remove most of those
                 int points = question.getPoints();
-                Calendar pointChange = new GregorianCalendar(2001, 10, 26);
                 randomMap.put(points, randomMap.get(points) + 1);
                 if (random.nextInt(randomMap.get(points)) == 0) { // swap with probability 1/i, 
                     pulledQuestions.put(points, question);
