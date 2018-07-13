@@ -2,6 +2,7 @@ package jeopardy.States;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -24,7 +25,7 @@ public class MainMenuState extends BaseState{
 
     static {
         try {
-            background = ImageIO.read(new File("data/mmbackground.jpg"));
+            background = ImageIO.read(new File("data/mmbackground.png"));
         }
         catch (IOException e) {
             throw new RuntimeException("Failed to read in background image");
@@ -34,6 +35,7 @@ public class MainMenuState extends BaseState{
     /**
      * Create a main menu for the Jeopardy game
      */
+    @SuppressWarnings("serial")
     private MainMenuState() {
         buttons = new ArrayList<>();
         MenuButton singleRect = new MenuButton(250, 200, 300, 100) {
@@ -69,9 +71,11 @@ public class MainMenuState extends BaseState{
 
     @Override
     public void render(Graphics2D graphics) {
-        // Use temporary image to draw everything all at once to graphcis and prevent flickering
+        // Use temporary image to draw everything all at once to graphics and prevent flickering
         BufferedImage tmpImage = new BufferedImage(800, 800, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D tmpGraphics = (Graphics2D) tmpImage.getGraphics();
+
+        tmpGraphics.drawImage(Utils.resizeImage(background, 800, 800), null, 0, 0);
 
         tmpGraphics.setColor(Color.BLUE);
 
