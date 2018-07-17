@@ -1,6 +1,7 @@
 package jeopardy.States;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import jeopardy.StateParams;
@@ -40,4 +41,10 @@ public interface State {
      * @param me the mouse event with the details of the mouse click
      */
     public void handleClick(MouseEvent me);
+
+    /**
+     * Called every frame with the location of the mouse
+     * @param location
+     */
+    public void handleMouse(Point location);
 }

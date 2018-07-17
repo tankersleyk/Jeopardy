@@ -1,6 +1,7 @@
 package jeopardy;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.Stack;
 
@@ -42,7 +43,7 @@ public class StateStack {
      * @param graphics the Graphics2D object to draw onto
      */
     public synchronized static void render(Graphics2D graphics) {
-        for (State state : states) {
+        for (State state : states) { // TODO: Have graphics return images to draw all at once to prevent flickering
             state.render(graphics);
         }
     }
@@ -70,5 +71,13 @@ public class StateStack {
      */
     public synchronized static void handleClick(MouseEvent me) {
         states.peek().handleClick(me);
+    }
+
+    /**
+     * Has the top state handle function for mouse location
+     * @param location the Point location of the mouse
+     */
+    public synchronized static void handleMouse(Point location) {
+        states.peek().handleMouse(location);
     }
 }

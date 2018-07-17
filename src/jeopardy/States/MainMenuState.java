@@ -2,14 +2,16 @@ package jeopardy.States;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -21,6 +23,7 @@ public class MainMenuState extends BaseState{
 
     private static MainMenuState instance = null;
     private final List<MenuButton> buttons;
+    private final Map<MenuButton, String> buttonLabels = new HashMap<>();
     private static final BufferedImage background;
     private static final BufferedImage logo;
 
@@ -56,9 +59,11 @@ public class MainMenuState extends BaseState{
             }
         };
 
-
         buttons.add(singleRect);
         buttons.add(multiRect);
+
+        buttonLabels.put(singleRect, "Single Player");
+        buttonLabels.put(multiRect, "Multiplayer");
     }
 
     /**
@@ -82,15 +87,12 @@ public class MainMenuState extends BaseState{
 
         tmpGraphics.drawImage(Utils.resizeImage(logo, 400, 100), null, 200, 50);
 
-        tmpGraphics.setColor(Utils.BLUE);
-
-        Rectangle2D singleRect = new Rectangle2D.Double(250, 200, 300, 100);
-        tmpGraphics.fill(singleRect);
-        Utils.drawCenteredString(tmpGraphics, "Single Player", singleRect, Color.WHITE);
-
-        Rectangle2D multiRect = new Rectangle2D.Double(250, 500, 300, 100);
-        tmpGraphics.fill(multiRect);
-        Utils.drawCenteredString(tmpGraphics, "Multi Player", multiRect, Color.WHITE);
+        for (MenuButton button : buttons) {
+            tmpGraphics.setColor(button.highlighted ? Utils.PURPLE : Utils.BLUE);
+            Rectangle2D rect = (Rectangle2D) button;
+            tmpGraphics.fill(rect);
+            Utils.drawCenteredString(tmpGraphics, buttonLabels.get(button), rect, Color.WHITE);
+        }
 
         graphics.drawImage(tmpImage, null, 0, 0);
     }
@@ -100,6 +102,19 @@ public class MainMenuState extends BaseState{
         for (MenuButton button : buttons) {
             if (button.contains(me.getPoint())) {
                 button.isClicked();
+            }
+        }
+    }
+
+    @Override
+    public void handleMouse(Point location) {
+        for (MenuButton button : buttons) {
+            if (button.contains(location)) {
+                button.highlighted = true;
+            }
+            else
+            {
+                button.highlighted = false;
             }
         }
     }

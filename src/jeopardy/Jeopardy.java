@@ -1,11 +1,13 @@
 package jeopardy;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Map;
 
 import javax.swing.JFrame;
@@ -31,6 +33,7 @@ public class Jeopardy {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Set up the graphics
+        //        window.setLayout(new BorderLayout());
         final JPanel drawingArea = new JPanel();
         drawingArea.setPreferredSize(new Dimension(800, 800));
         window.add(drawingArea);
@@ -51,9 +54,18 @@ public class Jeopardy {
         long lastTime = System.currentTimeMillis();
         // Game Loop
         while (true) {
-            float dt = (System.currentTimeMillis() - lastTime) * 1000;
+            float dt = (System.currentTimeMillis() - lastTime) * 1000; // Probably won't need it, but will keep for now
             StateStack.render(graphics);
-            lastTime = System.currentTimeMillis();
+            Point absoluteLocation = MouseInfo.getPointerInfo().getLocation();
+            int x = absoluteLocation.x;
+            int y = absoluteLocation.y;
+            Point location = new Point(x - (int) drawingArea.getLocationOnScreen().getX(), y - (int) drawingArea.getLocationOnScreen().getY());
+            // TODO: This is pretty inefficient, probably switch to JButton ASAP
+            StateStack.handleMouse(location); // MouseMove listener is even slower
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+            }
         }
     }
 }
