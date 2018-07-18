@@ -90,12 +90,12 @@ public class FirstRoundState extends BaseState{
         for (int i = 0; i < categoryList.size(); i++) { // Categories
             Rectangle2D categoryBox = new Rectangle2D.Double(i*(800/5), 0, 800/5, 800/6);
             tmpGraphics.fill(categoryBox);
-            Utils.drawCenteredString(tmpGraphics, categoryList.get(i), categoryBox, Color.WHITE);
+            Utils.drawCenteredString(tmpGraphics, categoryList.get(i), categoryBox, Color.WHITE, 20);
 
             for (int value = 1; value <= 5; value++) { // Question values
                 Rectangle2D valueBox = new Rectangle2D.Double(i*(800/5), value*(800/6), 800/5, 800/6);
                 tmpGraphics.fill(valueBox);
-                Utils.drawCenteredString(tmpGraphics, "$" + Integer.toString(value*200), valueBox, Utils.ORANGE);
+                Utils.drawCenteredString(tmpGraphics, "$" + Integer.toString(value*200), valueBox, Utils.ORANGE, 60);
             }
         }
 

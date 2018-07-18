@@ -1,6 +1,7 @@
 package jeopardy;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -19,15 +20,21 @@ public final class Utils {
      * @param text the text value to draw
      * @param rect the rectangle to center the string in
      * @param color the color to draw the text in
+     * @param fontSize the size of the font to use for the text
      */
-    public static void drawCenteredString(Graphics2D g, String text, Rectangle2D rect, Color color) {
+    public static void drawCenteredString(Graphics2D g, String text, Rectangle2D rect, Color color, int fontSize) {
         Color oldColor = g.getColor();
         g.setColor(color);
+
+        Font oldFont = g.getFont();
+        Font font = new Font("Serif", Font.PLAIN, fontSize);
+        g.setFont(font);
         FontMetrics metrics = g.getFontMetrics(g.getFont());
         int x = (int) (rect.getX() + (rect.getWidth() - metrics.stringWidth(text)) / 2);
         int y = (int) (rect.getY() + (rect.getHeight() - metrics.getHeight()) / 2) + metrics.getAscent();
         g.drawString(text, x, y);
         g.setColor(oldColor);
+        g.setFont(oldFont);
     }
 
     /**

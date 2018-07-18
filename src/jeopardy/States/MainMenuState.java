@@ -91,7 +91,7 @@ public class MainMenuState extends BaseState{
             tmpGraphics.setColor(button.highlighted ? Utils.PURPLE : Utils.BLUE);
             Rectangle2D rect = (Rectangle2D) button;
             tmpGraphics.fill(rect);
-            Utils.drawCenteredString(tmpGraphics, buttonLabels.get(button), rect, Color.WHITE);
+            Utils.drawCenteredString(tmpGraphics, buttonLabels.get(button), rect, Color.WHITE, 20);
         }
 
         graphics.drawImage(tmpImage, null, 0, 0);
