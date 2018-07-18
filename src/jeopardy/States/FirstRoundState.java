@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+
 import jeopardy.Question;
 import jeopardy.QuestionParser;
 import jeopardy.Round;
@@ -24,6 +26,17 @@ public class FirstRoundState extends BaseState{
     private static FirstRoundState instance = null;
     private final Round round = Round.JEOPARDY;
     private Map<String, Map<Integer, Question>> questions;
+
+    private static final BufferedImage background;
+
+    static {
+        try {
+            background = ImageIO.read(new File("data/mmbackground.png"));
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to read in images");
+        }
+    }
 
     private final File questionFile = new File("data/questions.csv");
 
@@ -87,15 +100,19 @@ public class FirstRoundState extends BaseState{
         for (String category : questions.keySet()) {
             categoryList.add(category);
         }
+
+        tmpGraphics.drawImage(Utils.resizeImage(background, 800, 800), null, 0, 0);
+
+        // TODO: Make long text split into multiple lines
         for (int i = 0; i < categoryList.size(); i++) { // Categories
-            Rectangle2D categoryBox = new Rectangle2D.Double(i*(800/5), 0, 800/5, 800/6);
+            Rectangle2D categoryBox = new Rectangle2D.Double(20+i*(680/5+20), 20, 680/5, 660/6);
             tmpGraphics.fill(categoryBox);
             Utils.drawCenteredString(tmpGraphics, categoryList.get(i), categoryBox, Color.WHITE, 20);
 
             for (int value = 1; value <= 5; value++) { // Question values
-                Rectangle2D valueBox = new Rectangle2D.Double(i*(800/5), value*(800/6), 800/5, 800/6);
+                Rectangle2D valueBox = new Rectangle2D.Double(20+i*(680/5+20), 20+value*(660/6+20), 680/5, 660/6);
                 tmpGraphics.fill(valueBox);
-                Utils.drawCenteredString(tmpGraphics, "$" + Integer.toString(value*200), valueBox, Utils.ORANGE, 60);
+                Utils.drawCenteredString(tmpGraphics, "$" + Integer.toString(value*200), valueBox, Utils.ORANGE, 52);
             }
         }
 
