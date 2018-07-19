@@ -30,6 +30,7 @@ public final class Utils {
         Font font = new Font("Serif", Font.PLAIN, fontSize);
         g.setFont(font);
         FontMetrics metrics = g.getFontMetrics(g.getFont());
+
         int x = (int) (rect.getX() + (rect.getWidth() - metrics.stringWidth(text)) / 2);
         int y = (int) (rect.getY() + (rect.getHeight() - metrics.getHeight()) / 2) + metrics.getAscent();
         g.drawString(text, x, y);
