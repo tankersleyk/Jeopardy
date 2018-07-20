@@ -76,7 +76,7 @@ public final class Utils {
      * @return the string with new lines inserted so that each section can be drawn
      */
     private static String splitString(FontMetrics metrics, String text, double w) {
-        final double MAX_LINE_PERC = 0.8; // Don't use more than this amount of the width
+        final double MAX_LINE_PERC = 1.0; // Don't use more than this amount of the width
         StringBuilder s = new StringBuilder();
         StringBuilder line = new StringBuilder();
 
@@ -84,17 +84,23 @@ public final class Utils {
 
         int i = 0;
         while (i < words.size()) {
-            while (i < words.size() && metrics.stringWidth(line.toString() + words.get(i)) <= MAX_LINE_PERC*w) { // TODO: worry about words too long to fit
+            while (i < words.size() && metrics.stringWidth(line.toString() + words.get(i)) <= MAX_LINE_PERC*w) {
                 line.append(words.get(i));
                 line.append(" ");
                 i+=1;
             }
-            if (metrics.stringWidth(words.get(Math.min(i, words.size()-1))) > MAX_LINE_PERC* w) {
+            if (i < words.size() && metrics.stringWidth(words.get(i)) > MAX_LINE_PERC* w) {
                 System.out.println(words.get(i));
+                s.append(words.get(i));
+                s.append('\n');
+                line = new StringBuilder();
+                i+=1;
             }
-            s.append(line);
-            s.append('\n');
-            line = new StringBuilder();
+            else {
+                s.append(line);
+                s.append('\n');
+                line = new StringBuilder();
+            }
         }
 
         s.deleteCharAt(s.length()-1); // remove last newline char

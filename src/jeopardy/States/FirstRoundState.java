@@ -106,12 +106,12 @@ public class FirstRoundState extends BaseState{
         for (int i = 0; i < categoryList.size(); i++) { // Categories
             Rectangle2D categoryBox = new Rectangle2D.Double(20+i*(680/5+20), 20, 680/5, 660/6);
             tmpGraphics.fill(categoryBox);
-            Utils.drawCenteredString(tmpGraphics, categoryList.get(i), categoryBox, Color.WHITE, 12);
+            Utils.drawCenteredString(tmpGraphics, categoryList.get(i), categoryBox, Color.WHITE, 14);
 
             for (int value = 1; value <= 5; value++) { // Question values
                 Rectangle2D valueBox = new Rectangle2D.Double(20+i*(680/5+20), 20+value*(660/6+20), 680/5, 660/6);
                 tmpGraphics.fill(valueBox);
-                Utils.drawCenteredString(tmpGraphics, "$" + Integer.toString(value*200), valueBox, Utils.ORANGE, 20);
+                Utils.drawCenteredString(tmpGraphics, "$" + Integer.toString(value*200), valueBox, Utils.ORANGE, 50);
             }
         }
 
