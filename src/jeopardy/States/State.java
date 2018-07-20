@@ -45,6 +45,7 @@ public interface State {
     /**
      * Called every frame with the location of the mouse
      * @param location
+     * @return true iff the screen needs to be re-rendered
      */
-    public void handleMouse(Point location);
+    public boolean handleMouse(Point location);
 }

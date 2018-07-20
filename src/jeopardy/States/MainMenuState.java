@@ -107,15 +107,22 @@ public class MainMenuState extends BaseState{
     }
 
     @Override
-    public void handleMouse(Point location) {
+    public boolean handleMouse(Point location) {
         for (MenuButton button : buttons) {
             if (button.contains(location)) {
-                button.highlighted = true;
+                if (!button.highlighted) {
+                    button.highlighted = true;
+                    return true;
+                }
             }
             else
             {
-                button.highlighted = false;
+                if (button.highlighted) {
+                    button.highlighted = false;
+                    return true;
+                }
             }
         }
+        return false;
     }
 }

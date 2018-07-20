@@ -38,8 +38,8 @@ public class BaseState implements State{
     }
 
     @Override
-    public void handleMouse(Point location) {
-
+    public boolean handleMouse(Point location) {
+        return false;
     }
 
 }
