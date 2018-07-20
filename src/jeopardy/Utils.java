@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import java.util.List;
 
 public final class Utils {
 
@@ -31,9 +33,17 @@ public final class Utils {
         g.setFont(font);
         FontMetrics metrics = g.getFontMetrics(g.getFont());
 
-        int x = (int) (rect.getX() + (rect.getWidth() - metrics.stringWidth(text)) / 2);
-        int y = (int) (rect.getY() + (rect.getHeight() - metrics.getHeight()) / 2) + metrics.getAscent();
-        g.drawString(text, x, y);
+        List<String> toWrite = Arrays.asList(splitString(metrics, text, rect.getWidth()).split("\n"));
+        int n = toWrite.size();
+
+        for (int i = 0; i < n; i++) {
+            String s = toWrite.get(i);
+            int x = (int) (rect.getX() + (rect.getWidth() - metrics.stringWidth(s)) / 2);
+            int y = (int) (rect.getY() + (rect.getHeight() - metrics.getHeight()) * (i+1)/(n+1)) + metrics.getAscent();
+
+            g.drawString(s, x, y);
+        }
+
         g.setColor(oldColor);
         g.setFont(oldFont);
     }
@@ -56,5 +66,39 @@ public final class Utils {
         graphics.dispose();
 
         return newImage;
+    }
+
+    /**
+     * Split a string such that each section (split by '\n') can be drawn in the width supplied
+     * @param metrics the FontMetrics that describe the font being used to display the text
+     * @param text the text to write for this object
+     * @param w the width (in pixels) of the area in which to draw the string
+     * @return the string with new lines inserted so that each section can be drawn
+     */
+    private static String splitString(FontMetrics metrics, String text, double w) {
+        final double MAX_LINE_PERC = 0.8; // Don't use more than this amount of the width
+        StringBuilder s = new StringBuilder();
+        StringBuilder line = new StringBuilder();
+
+        List<String> words = Arrays.asList(text.split(" "));
+
+        int i = 0;
+        while (i < words.size()) {
+            while (i < words.size() && metrics.stringWidth(line.toString() + words.get(i)) <= MAX_LINE_PERC*w) { // TODO: worry about words too long to fit
+                line.append(words.get(i));
+                line.append(" ");
+                i+=1;
+            }
+            if (metrics.stringWidth(words.get(Math.min(i, words.size()-1))) > MAX_LINE_PERC* w) {
+                System.out.println(words.get(i));
+            }
+            s.append(line);
+            s.append('\n');
+            line = new StringBuilder();
+        }
+
+        s.deleteCharAt(s.length()-1); // remove last newline char
+
+        return s.toString();
     }
 }

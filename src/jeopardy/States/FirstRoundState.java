@@ -103,16 +103,15 @@ public class FirstRoundState extends BaseState{
 
         tmpGraphics.drawImage(Utils.resizeImage(background, 800, 800), null, 0, 0);
 
-        // TODO: Make long text split into multiple lines
         for (int i = 0; i < categoryList.size(); i++) { // Categories
             Rectangle2D categoryBox = new Rectangle2D.Double(20+i*(680/5+20), 20, 680/5, 660/6);
             tmpGraphics.fill(categoryBox);
-            Utils.drawCenteredString(tmpGraphics, categoryList.get(i), categoryBox, Color.WHITE, 20);
+            Utils.drawCenteredString(tmpGraphics, categoryList.get(i), categoryBox, Color.WHITE, 12);
 
             for (int value = 1; value <= 5; value++) { // Question values
                 Rectangle2D valueBox = new Rectangle2D.Double(20+i*(680/5+20), 20+value*(660/6+20), 680/5, 660/6);
                 tmpGraphics.fill(valueBox);
-                Utils.drawCenteredString(tmpGraphics, "$" + Integer.toString(value*200), valueBox, Utils.ORANGE, 52);
+                Utils.drawCenteredString(tmpGraphics, "$" + Integer.toString(value*200), valueBox, Utils.ORANGE, 20);
             }
         }
 
@@ -140,6 +139,7 @@ public class FirstRoundState extends BaseState{
         Random random = new Random();
 
         for (Question question : questions) {
+            // TODO: Figure out why same few categories are being used
             if (question.getCategory().equals(category) && randomMap.containsKey(question.getPoints())) { // data uses values gained from daily doubles - remove most of those
                 int points = question.getPoints();
                 randomMap.put(points, randomMap.get(points) + 1);
