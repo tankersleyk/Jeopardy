@@ -23,6 +23,9 @@ public class Jeopardy {
 
     private static Map<String, Boolean> settings;
 
+    public static int WIN_WIDTH = 1280;
+    public static int WIN_HEIGHT = 720;
+
     /**
      * Handle the game meta information, including player's settings and server connection
      */
@@ -35,7 +38,7 @@ public class Jeopardy {
         // Set up the graphics
         //        window.setLayout(new BorderLayout());
         final JPanel drawingArea = new JPanel();
-        drawingArea.setPreferredSize(new Dimension(800, 800));
+        drawingArea.setPreferredSize(new Dimension(WIN_WIDTH, WIN_HEIGHT));
         window.add(drawingArea);
         window.pack();
         window.setVisible(true);

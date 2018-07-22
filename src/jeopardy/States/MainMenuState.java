@@ -15,6 +15,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import jeopardy.Jeopardy;
 import jeopardy.MenuButton;
 import jeopardy.StateStack;
 import jeopardy.Utils;
@@ -26,6 +27,9 @@ public class MainMenuState extends BaseState{
     private final Map<MenuButton, String> buttonLabels = new HashMap<>();
     private static final BufferedImage background;
     private static final BufferedImage logo;
+
+    private final int BUTTON_WIDTH = 300;
+    private final int BUTTON_HEIGHT = 100;
 
     // TODO: probably split these try's
     static {
@@ -44,14 +48,19 @@ public class MainMenuState extends BaseState{
     @SuppressWarnings("serial")
     private MainMenuState() {
         buttons = new ArrayList<>();
-        MenuButton singleRect = new MenuButton(250, 200, 300, 100) {
+        int x = (Jeopardy.WIN_WIDTH-BUTTON_WIDTH)/2;
+
+        int y = (Jeopardy.WIN_HEIGHT - BUTTON_HEIGHT * 2) / 3;
+        MenuButton singleRect = new MenuButton(x, y, BUTTON_WIDTH, BUTTON_HEIGHT) {
             @Override
             public void isClicked() {
                 StateStack.pop(); // exit main menu state
                 StateStack.push(FirstRoundState.getInstance());
             }
         };
-        MenuButton multiRect = new MenuButton(250, 500, 300, 100) {
+
+        y = 2 * (Jeopardy.WIN_HEIGHT - BUTTON_HEIGHT * 2) / 3 + BUTTON_HEIGHT;
+        MenuButton multiRect = new MenuButton(x, y, BUTTON_WIDTH, BUTTON_HEIGHT) {
             @Override
             public void isClicked() {
                 StateStack.pop(); // exit main menu state
@@ -80,12 +89,12 @@ public class MainMenuState extends BaseState{
     @Override
     public void render(Graphics2D graphics) {
         // Use temporary image to draw everything all at once to graphics and prevent flickering
-        BufferedImage tmpImage = new BufferedImage(800, 800, BufferedImage.TYPE_4BYTE_ABGR);
+        BufferedImage tmpImage = new BufferedImage(Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D tmpGraphics = (Graphics2D) tmpImage.getGraphics();
 
-        tmpGraphics.drawImage(Utils.resizeImage(background, 800, 800), null, 0, 0);
+        tmpGraphics.drawImage(Utils.resizeImage(background, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT), null, 0, 0);
 
-        tmpGraphics.drawImage(Utils.resizeImage(logo, 400, 100), null, 200, 50);
+        tmpGraphics.drawImage(Utils.resizeImage(logo, Jeopardy.WIN_WIDTH / 2, Jeopardy.WIN_HEIGHT / 8), null, Jeopardy.WIN_WIDTH / 4, Jeopardy.WIN_HEIGHT / 16);
 
         for (MenuButton button : buttons) {
             tmpGraphics.setColor(button.highlighted ? Utils.PURPLE : Utils.BLUE);

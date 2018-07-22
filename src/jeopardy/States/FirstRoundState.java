@@ -16,6 +16,7 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import jeopardy.Jeopardy;
 import jeopardy.Question;
 import jeopardy.QuestionParser;
 import jeopardy.Round;
@@ -26,6 +27,10 @@ public class FirstRoundState extends BaseState{
     private static FirstRoundState instance = null;
     private final Round round = Round.JEOPARDY;
     private Map<String, Map<Integer, Question>> questions;
+
+    private final int SPACING = 20; // how many pixels to leave between boxes
+    private final int CATEGORIES = 5; // 5 categories in a round
+    private final int QUESTIONS_PER_CAT = 5; // 5 questions per category
 
     private static final BufferedImage background;
 
@@ -92,7 +97,7 @@ public class FirstRoundState extends BaseState{
     @Override
     public void render(Graphics2D graphics) {
         // Use temporary image to draw everything all at once to graphics and prevent flickering
-        BufferedImage tmpImage = new BufferedImage(800, 800, BufferedImage.TYPE_4BYTE_ABGR);
+        BufferedImage tmpImage = new BufferedImage(Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D tmpGraphics = (Graphics2D) tmpImage.getGraphics();
 
         tmpGraphics.setColor(Utils.BLUE);
@@ -101,17 +106,25 @@ public class FirstRoundState extends BaseState{
             categoryList.add(category);
         }
 
-        tmpGraphics.drawImage(Utils.resizeImage(background, 800, 800), null, 0, 0);
+        tmpGraphics.drawImage(Utils.resizeImage(background, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT), null, 0, 0);
 
         for (int i = 0; i < categoryList.size(); i++) { // Categories
-            Rectangle2D categoryBox = new Rectangle2D.Double(20+i*(680/5+20), 20, 680/5, 660/6);
+            Rectangle2D categoryBox = new Rectangle2D.Double(
+                    SPACING + i*((Jeopardy.WIN_WIDTH - SPACING * (CATEGORIES + 1))/CATEGORIES + SPACING),
+                    SPACING,
+                    (Jeopardy.WIN_WIDTH - SPACING * (CATEGORIES + 1))/CATEGORIES,
+                    (Jeopardy.WIN_HEIGHT - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1));
             tmpGraphics.fill(categoryBox);
             Utils.drawCenteredString(tmpGraphics, categoryList.get(i), categoryBox, Color.WHITE, 14);
 
             for (int value = 1; value <= 5; value++) { // Question values
-                Rectangle2D valueBox = new Rectangle2D.Double(20+i*(680/5+20), 20+value*(660/6+20), 680/5, 660/6);
+                Rectangle2D valueBox = new Rectangle2D.Double(
+                        SPACING + i*((Jeopardy.WIN_WIDTH - SPACING * (CATEGORIES + 1))/CATEGORIES + SPACING),
+                        SPACING+value*((Jeopardy.WIN_HEIGHT - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1) + SPACING),
+                        (Jeopardy.WIN_WIDTH - SPACING * (CATEGORIES + 1))/CATEGORIES,
+                        (Jeopardy.WIN_HEIGHT - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1));
                 tmpGraphics.fill(valueBox);
-                Utils.drawCenteredString(tmpGraphics, "$" + Integer.toString(value*200), valueBox, Utils.ORANGE, 50);
+                Utils.drawCenteredString(tmpGraphics, "$" + Integer.toString(value*200), valueBox, Utils.ORANGE, 50); // TODO: Scale font size with screen size
             }
         }
 
