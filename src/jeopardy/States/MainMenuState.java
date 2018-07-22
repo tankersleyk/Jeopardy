@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.swing.JPanel;
 
 import jeopardy.Jeopardy;
 import jeopardy.MenuButton;
@@ -55,7 +56,7 @@ public class MainMenuState extends BaseState{
             @Override
             public void isClicked() {
                 StateStack.pop(); // exit main menu state
-                StateStack.push(FirstRoundState.getInstance());
+                StateStack.push(PlayerCreationState.getInstance());
             }
         };
 
@@ -87,7 +88,8 @@ public class MainMenuState extends BaseState{
     }
 
     @Override
-    public void render(Graphics2D graphics) {
+    public void render(JPanel panel) {
+        Graphics2D graphics = (Graphics2D) panel.getGraphics();
         // Use temporary image to draw everything all at once to graphics and prevent flickering
         BufferedImage tmpImage = new BufferedImage(Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D tmpGraphics = (Graphics2D) tmpImage.getGraphics();

@@ -15,11 +15,14 @@ import java.util.Random;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+import javax.swing.JPanel;
 
 import jeopardy.Jeopardy;
+import jeopardy.Player;
 import jeopardy.Question;
 import jeopardy.QuestionParser;
 import jeopardy.Round;
+import jeopardy.StateParams;
 import jeopardy.Utils;
 
 public class FirstRoundState extends BaseState{
@@ -28,9 +31,11 @@ public class FirstRoundState extends BaseState{
     private final Round round = Round.JEOPARDY;
     private Map<String, Map<Integer, Question>> questions;
 
-    private final int SPACING = 20; // how many pixels to leave between boxes
-    private final int CATEGORIES = 5; // 5 categories in a round
-    private final int QUESTIONS_PER_CAT = 5; // 5 questions per category
+    private Player player;
+
+    private static final int SPACING = 20; // how many pixels to leave between boxes
+    private static final int CATEGORIES = 5; // 5 categories in a round
+    private static final int QUESTIONS_PER_CAT = 5; // 5 questions per category
 
     private static final BufferedImage background;
 
@@ -95,7 +100,13 @@ public class FirstRoundState extends BaseState{
     }
 
     @Override
-    public void render(Graphics2D graphics) {
+    public void enter(StateParams params) {
+        player = params.PLAYER;
+    }
+
+    @Override
+    public void render(JPanel panel) {
+        Graphics2D graphics = (Graphics2D) panel.getGraphics();
         // Use temporary image to draw everything all at once to graphics and prevent flickering
         BufferedImage tmpImage = new BufferedImage(Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D tmpGraphics = (Graphics2D) tmpImage.getGraphics();

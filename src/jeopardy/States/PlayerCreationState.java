@@ -1,18 +1,98 @@
 package jeopardy.States;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import jeopardy.Jeopardy;
+import jeopardy.Player;
+import jeopardy.StateParams;
+import jeopardy.StateStack;
+import jeopardy.Utils;
 
 public class PlayerCreationState extends BaseState{
 
     private static PlayerCreationState instance = null;
-    private static JTextField textfield = new JTextField(20);
+    private JTextField textfield = new JTextField("Enter name...", 0);
+    private static final int TEXT_WIDTH = Jeopardy.WIN_WIDTH / 3;
+    private static final int TEXT_HEIGHT = 20;
+    private static final BufferedImage background;
+    private boolean hasEntered = false;
+
+    static {
+        try {
+            background = ImageIO.read(new File("data/mmbackground.png"));
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to read in images");
+        }
+    }
 
     /**
      * Create a way for the player to enter a name
      */
-    @SuppressWarnings("serial")
     private PlayerCreationState() {
+        textfield.setBounds(
+                Jeopardy.WIN_WIDTH / 2 - TEXT_WIDTH / 2,
+                Jeopardy.WIN_HEIGHT / 2 - TEXT_HEIGHT / 2 + Jeopardy.WIN_HEIGHT / (TEXT_HEIGHT / 2),
+                TEXT_WIDTH, TEXT_HEIGHT);
+        textfield.setForeground(Color.GRAY);
+        textfield.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                textfield.setText("");
+                textfield.setForeground(Color.BLACK);
+                hasEntered = true;
+            }
 
+            @Override
+            public void focusLost(FocusEvent arg0) {
+                // do nothing
+            }
+        });
+
+        // TODO: separate this into own class?
+        textfield.addKeyListener(new KeyListener() {
+
+            @Override
+            public void keyPressed(KeyEvent arg0) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent arg0) {
+                int keyCode = arg0.getKeyCode();
+                if (keyCode == Utils.ENTER_KEY && hasEntered) {
+                    String name = textfield.getText();
+                    if (name.length() > 0) {
+                        StateStack.pop(); // Exit player creation state
+                        StateStack.removeComponent(textfield);
+                        StateStack.push(FirstRoundState.getInstance(), new StateParams(new Player(name)));
+
+                    }
+                    else {
+                        // TODO: add error message
+                    }
+                }
+            }
+
+            @Override
+            public void keyTyped(KeyEvent arg0) {
+
+            }
+
+        });
     }
 
     /**
@@ -24,5 +104,21 @@ public class PlayerCreationState extends BaseState{
             instance = new PlayerCreationState();
         }
         return instance;
+    }
+
+    @Override
+    public void render(JPanel panel) {
+        Graphics2D graphics = (Graphics2D) panel.getGraphics();
+
+        textfield.setBorder(null);
+        panel.add(textfield);
+
+        graphics.drawImage(Utils.resizeImage(background, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT), null, 0, 0);
+        Rectangle2D textLocation = new Rectangle2D.Double(
+                Jeopardy.WIN_WIDTH / 2 - TEXT_WIDTH / 2,
+                Jeopardy.WIN_HEIGHT / 2 - TEXT_HEIGHT / 2,
+                TEXT_WIDTH, TEXT_HEIGHT);
+
+        Utils.drawCenteredString(graphics, "Enter your name", textLocation, Color.WHITE, 50);
     }
 }

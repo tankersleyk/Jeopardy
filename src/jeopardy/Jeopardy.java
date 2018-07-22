@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Map;
@@ -45,6 +47,7 @@ public class Jeopardy {
         final Graphics2D graphics = (Graphics2D) drawingArea.getGraphics();
 
         StateStack.changeGraphics(graphics);
+        StateStack.changePanel(drawingArea);
         StateStack.push(MainMenuState.getInstance());
 
         // Set up the mouse listener to handle a player's clicks
@@ -67,13 +70,10 @@ public class Jeopardy {
         // Game Loop
         while (true) {
             float dt = (System.currentTimeMillis() - lastTime) * 1000; // Probably won't need it, but will keep for now
-            Point absoluteLocation = MouseInfo.getPointerInfo().getLocation();
-            int x = absoluteLocation.x;
-            int y = absoluteLocation.y;
-            Point location = new Point(x - (int) drawingArea.getLocationOnScreen().getX(), y - (int) drawingArea.getLocationOnScreen().getY());
             try {
                 Thread.sleep(20);
             } catch (InterruptedException e) {
+
             }
         }
     }

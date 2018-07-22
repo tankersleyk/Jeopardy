@@ -1,9 +1,12 @@
 package jeopardy;
 
+import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.Stack;
+
+import javax.swing.JPanel;
 
 import jeopardy.States.State;
 
@@ -11,6 +14,7 @@ public class StateStack {
 
     private static Stack<State> states = new Stack<State>();
     private static Graphics2D graphics;
+    private static JPanel panel;
 
     /**
      * Push a new state onto this stack - StateStack MUST have a graphics object
@@ -47,8 +51,8 @@ public class StateStack {
      */
     public synchronized static void render() {
         for (State state : states) { // TODO: Have graphics return images to draw all at once to prevent flickering
-            synchronized (graphics) { // States don't acquire lock, statestack does - change?
-                state.render(graphics);
+            synchronized (panel) { // States don't acquire lock, statestack does - change?
+                state.render(panel);
             }
         }
     }
@@ -94,5 +98,21 @@ public class StateStack {
      */
     public static void changeGraphics(Graphics2D graphics) {
         StateStack.graphics = graphics;
+    }
+
+    /**
+     * Set the panel for this state stack to add components onto
+     * @param panel the panel to use for rendering
+     */
+    public static void changePanel(JPanel panel) {
+        StateStack.panel = panel;
+    }
+
+    /**
+     * Remove a component from the JPanel associated with the StateStack
+     * @param component the component to remove
+     */
+    public static void removeComponent(Component component) {
+        panel.remove(component);
     }
 }

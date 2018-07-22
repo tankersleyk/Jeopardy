@@ -11,10 +11,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class Utils {
-
+    // Useful colors
     public final static Color BLUE = Color.getHSBColor(232f/360f, .97f, .45f);
     public final static Color ORANGE = Color.getHSBColor(.1f, .64f, .83f);
     public final static Color PURPLE = Color.getHSBColor(252/360f, .87f, .7f);
+
+    // Useful keyCodes
+    public final static int ENTER_KEY = 10;
 
     /**
      * Draw a string that is centered in some given rectangle

@@ -4,6 +4,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JPanel;
+
 import jeopardy.StateParams;
 
 /**
@@ -32,6 +34,14 @@ public interface State {
     public void render(Graphics2D graphics);
 
     /**
+     * Draws the relevant graphics for this onto the Graphics object of the panel
+     *  and adds any necessary components such as JTextFields or JButtons
+     * @param panel the panel to use for rendering
+     * @effects draws onto the graphics object of the panel and adds components
+     */
+    public void render(JPanel panel);
+
+    /**
      * Called when the state is exited
      */
     public void exit();
@@ -48,4 +58,5 @@ public interface State {
      * @return true iff the screen needs to be re-rendered
      */
     public boolean handleMouse(Point location);
+
 }
