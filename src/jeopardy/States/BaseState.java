@@ -1,8 +1,6 @@
 package jeopardy.States;
 
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;
 
@@ -37,16 +35,6 @@ public class BaseState implements State{
     @Override
     public void exit() {
 
-    }
-
-    @Override
-    public void handleClick(MouseEvent me) {
-
-    }
-
-    @Override
-    public boolean handleMouse(Point location) {
-        return false;
     }
 
 }

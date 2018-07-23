@@ -1,9 +1,6 @@
 package jeopardy;
 
 import java.awt.Component;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
 import java.util.Stack;
 
 import javax.swing.JPanel;
@@ -13,7 +10,6 @@ import jeopardy.States.State;
 public class StateStack {
 
     private static Stack<State> states = new Stack<State>();
-    private static Graphics2D graphics;
     private static JPanel panel;
 
     /**
@@ -72,32 +68,6 @@ public class StateStack {
         while (!states.empty()) {
             states.pop();
         }
-    }
-
-    /**
-     * Has the top state handle the click event of a mouse
-     * @param me the mouse event with the details of the mouse click
-     */
-    public synchronized static void handleClick(MouseEvent me) {
-        states.peek().handleClick(me);
-    }
-
-    /**
-     * Has the top state handle function for mouse location
-     * @param location the Point location of the mouse
-     */
-    public synchronized static void handleMouse(Point location) {
-        if (states.peek().handleMouse(location)) {
-            StateStack.render();
-        }
-    }
-
-    /**
-     * Set the graphics for this state stack to draw onto
-     * @param graphics the graphics to draw onto
-     */
-    public static void changeGraphics(Graphics2D graphics) {
-        StateStack.graphics = graphics;
     }
 
     /**

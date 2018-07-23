@@ -79,7 +79,8 @@ public class PlayerCreationState extends BaseState{
                         StateStack.pop(); // Exit player creation state
                         StateStack.removeComponent(textfield);
                         StateStack.push(FirstRoundState.getInstance(), new StateParams(new Player(name)));
-
+                        textfield.setText("Enter name...");
+                        hasEntered = false;
                     }
                     else {
                         // TODO: add error message
@@ -112,6 +113,7 @@ public class PlayerCreationState extends BaseState{
 
         textfield.setBorder(null);
         panel.add(textfield);
+        textfield.repaint();
 
         graphics.drawImage(Utils.resizeImage(background, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT), null, 0, 0);
         Rectangle2D textLocation = new Rectangle2D.Double(

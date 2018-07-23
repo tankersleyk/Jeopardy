@@ -2,6 +2,8 @@ package jeopardy.States;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -17,6 +19,7 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import jeopardy.GameButton;
 import jeopardy.Jeopardy;
 import jeopardy.Player;
 import jeopardy.Question;
@@ -30,6 +33,9 @@ public class FirstRoundState extends BaseState{
     private static FirstRoundState instance = null;
     private final Round round = Round.JEOPARDY;
     private Map<String, Map<Integer, Question>> questions;
+
+    private List<GameButton> questionButtons;
+    private List<String> categoryList;
 
     private Player player;
 
@@ -50,6 +56,7 @@ public class FirstRoundState extends BaseState{
 
     private final File questionFile = new File("data/questions.csv");
 
+    @SuppressWarnings("serial")
     private FirstRoundState() {
         List<Question> allQuestions;
         try {
@@ -79,10 +86,49 @@ public class FirstRoundState extends BaseState{
                 }
             }
         }
+
         this.questions = new HashMap<>();
 
         for (String category : chosenCategories) {
             questions.put(category, pullQuestions(allQuestions, category));
+        }
+
+        categoryList = new ArrayList<>();
+        for (String category : questions.keySet()) {
+            categoryList.add(category);
+        }
+
+        questionButtons = new ArrayList<>();
+
+        for (i = 0; i < categoryList.size(); i++) {
+            // TODO: Scale font size with screen size
+            for (int value = 1; value <= 5; value++) { // Question values
+                GameButton question = new GameButton(
+                        SPACING + i*((Jeopardy.WIN_WIDTH - SPACING * (CATEGORIES + 1))/CATEGORIES + SPACING),
+                        SPACING + value*((Jeopardy.WIN_HEIGHT - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1) + SPACING),
+                        (Jeopardy.WIN_WIDTH - SPACING * (CATEGORIES + 1))/CATEGORIES,
+                        (Jeopardy.WIN_HEIGHT - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1),
+                        Utils.BLUE, Utils.ORANGE, "$" + Integer.toString(value * 200), 50) {
+                    @Override
+                    public void isClicked() {
+                        // TODO: Goto question answering state
+                    }
+                };
+                questionButtons.add(question);
+            }
+        }
+
+        // Set up button highlighting
+        for (GameButton button : questionButtons) {
+            button.addMouseListener(new MouseAdapter() {
+                public void mouseEntered(MouseEvent e) {
+                    button.setBackground(Utils.PURPLE);
+                }
+
+                public void mouseExited(MouseEvent e) {
+                    button.setBackground(Utils.BLUE);
+                }
+            });
         }
     }
 
@@ -110,15 +156,11 @@ public class FirstRoundState extends BaseState{
         // Use temporary image to draw everything all at once to graphics and prevent flickering
         BufferedImage tmpImage = new BufferedImage(Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D tmpGraphics = (Graphics2D) tmpImage.getGraphics();
-
         tmpGraphics.setColor(Utils.BLUE);
-        List<String> categoryList = new ArrayList<>();
-        for (String category : questions.keySet()) {
-            categoryList.add(category);
-        }
 
         tmpGraphics.drawImage(Utils.resizeImage(background, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT), null, 0, 0);
 
+        // Draw manually instead of JButtons so that text can go to multiple lines - maybe change later by inserting new lines
         for (int i = 0; i < categoryList.size(); i++) { // Categories
             Rectangle2D categoryBox = new Rectangle2D.Double(
                     SPACING + i*((Jeopardy.WIN_WIDTH - SPACING * (CATEGORIES + 1))/CATEGORIES + SPACING),
@@ -127,21 +169,15 @@ public class FirstRoundState extends BaseState{
                     (Jeopardy.WIN_HEIGHT - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1));
             tmpGraphics.fill(categoryBox);
             Utils.drawCenteredString(tmpGraphics, categoryList.get(i), categoryBox, Color.WHITE, 14);
+        }
 
-            for (int value = 1; value <= 5; value++) { // Question values
-                Rectangle2D valueBox = new Rectangle2D.Double(
-                        SPACING + i*((Jeopardy.WIN_WIDTH - SPACING * (CATEGORIES + 1))/CATEGORIES + SPACING),
-                        SPACING+value*((Jeopardy.WIN_HEIGHT - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1) + SPACING),
-                        (Jeopardy.WIN_WIDTH - SPACING * (CATEGORIES + 1))/CATEGORIES,
-                        (Jeopardy.WIN_HEIGHT - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1));
-                tmpGraphics.fill(valueBox);
-                Utils.drawCenteredString(tmpGraphics, "$" + Integer.toString(value*200), valueBox, Utils.ORANGE, 50); // TODO: Scale font size with screen size
-            }
+        for (GameButton question : questionButtons) {
+            panel.add(question);
+            question.repaint();
         }
 
         graphics.drawImage(tmpImage, null, 0, 0);
     }
-
 
     /**
      * Pulls 5 questions of increasing value from 5 distinct categories from a list of questions
