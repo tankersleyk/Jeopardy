@@ -44,6 +44,7 @@ public class QuestionParser {
 
             String rounds = info.get(2);
             String category = info.get(3);
+            category = category.substring(1, category.length() - 1);
             int value = 0;
 
             // TODO: handle this better
@@ -51,7 +52,9 @@ public class QuestionParser {
                 value = Integer.parseInt(info.get(4).substring(2, info.get(4).length()-1).replaceAll(",", "")); // remove quotes, $, and commas
             }
             String question = info.get(5);
+            question = question.substring(1, question.length() - 1);
             String answer = info.get(6);
+            answer = answer.substring(1, answer.length() - 1);
 
             Round round;
             switch (rounds) {
