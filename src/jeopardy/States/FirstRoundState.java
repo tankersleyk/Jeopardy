@@ -72,7 +72,7 @@ public class FirstRoundState extends BaseState{
                 int replaceIndex = random.nextInt(5);
 
                 if (random.nextInt(i) < 5) { // swap with probability 5/i, 
-                    chosenCategories.add(replaceIndex, category);
+                    chosenCategories.set(replaceIndex, category);
                 }
             }
         }
@@ -202,7 +202,6 @@ public class FirstRoundState extends BaseState{
         Random random = new Random();
 
         for (Question question : questions) {
-            // TODO: Figure out why same few categories are being used
             if (question.getCategory().equals(category) && randomMap.containsKey(question.getPoints())) { // data uses values gained from daily doubles - remove most of those
                 int points = question.getPoints();
                 randomMap.put(points, randomMap.get(points) + 1);
