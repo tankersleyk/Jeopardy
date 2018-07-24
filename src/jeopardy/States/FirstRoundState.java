@@ -26,6 +26,7 @@ import jeopardy.Question;
 import jeopardy.QuestionParser;
 import jeopardy.Round;
 import jeopardy.StateParams;
+import jeopardy.StateStack;
 import jeopardy.Utils;
 
 public class FirstRoundState extends BaseState{
@@ -91,16 +92,23 @@ public class FirstRoundState extends BaseState{
 
         for (i = 0; i < categoryList.size(); i++) {
             // TODO: Scale font size with screen size
+            String category = categoryList.get(i);
             for (int value = 1; value <= 5; value++) { // Question values
+                int points = value * 200;
                 GameButton question = new GameButton(
                         SPACING + i*((Jeopardy.WIN_WIDTH - SPACING * (CATEGORIES + 1))/CATEGORIES + SPACING),
                         SPACING + value*((Jeopardy.WIN_HEIGHT - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1) + SPACING),
                         (Jeopardy.WIN_WIDTH - SPACING * (CATEGORIES + 1))/CATEGORIES,
                         (Jeopardy.WIN_HEIGHT - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1),
-                        Utils.BLUE, Utils.ORANGE, "$" + Integer.toString(value * 200), 50) {
+                        Utils.BLUE, Utils.ORANGE, "$" + Integer.toString(points), 50) {
                     @Override
                     public void isClicked() {
-                        // TODO: Goto question answering state
+                        for (GameButton button : questionButtons) {
+                            StateStack.removeComponent(button);
+                        }
+                        System.out.println("hi");
+                        Question question = questions.get(category).get(points);
+                        StateStack.push(QuestionAnsweringState.getInstance(), new StateParams(player, question));
                     }
                 };
                 questionButtons.add(question);
@@ -116,6 +124,12 @@ public class FirstRoundState extends BaseState{
 
                 public void mouseExited(MouseEvent e) {
                     button.setBackground(Utils.BLUE);
+                }
+
+                public void mouseClicked(MouseEvent e) {
+                    StateStack.removeComponent(button);
+                    questionButtons.remove(button);
+                    button.isClicked();
                 }
             });
         }

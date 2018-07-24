@@ -24,4 +24,12 @@ public class Player {
     public int getMoney() {
         return money;
     }
+
+    /**
+     * Add to this player's count
+     * @param value the amount of money to add
+     */
+    public void addMoney(int value) {
+        this.money += value;
+    }
 }

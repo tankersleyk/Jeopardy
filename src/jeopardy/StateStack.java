@@ -46,11 +46,7 @@ public class StateStack {
      *  item in the stack to the topmost - StateStack MUST have a graphics object
      */
     public synchronized static void render() {
-        for (State state : states) { // TODO: Have graphics return images to draw all at once to prevent flickering
-            synchronized (panel) { // States don't acquire lock, statestack does - change?
-                state.render(panel);
-            }
-        }
+        states.peek().render(panel);
     }
 
     /**
@@ -59,6 +55,9 @@ public class StateStack {
     public synchronized static void pop() {
         states.peek().exit();
         states.pop();
+        if (states.size() > 0 ) {
+            StateStack.render();
+        }
     }
 
     /**
