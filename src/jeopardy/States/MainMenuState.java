@@ -22,20 +22,17 @@ public class MainMenuState extends BaseState{
 
     private static MainMenuState instance = null;
     private final List<GameButton> buttons;
-    private static final BufferedImage background;
     private static final BufferedImage logo;
 
     private final int BUTTON_WIDTH = 300;
     private final int BUTTON_HEIGHT = 100;
 
-    // TODO: probably split these try's
     static {
         try {
-            background = ImageIO.read(new File("data/mmbackground.png"));
             logo = ImageIO.read(new File("data/logo.png"));
         }
         catch (IOException e) {
-            throw new RuntimeException("Failed to read in images");
+            throw new RuntimeException("Failed to read in logo");
         }
     }
 
@@ -108,7 +105,7 @@ public class MainMenuState extends BaseState{
         BufferedImage tmpImage = new BufferedImage(Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D tmpGraphics = (Graphics2D) tmpImage.getGraphics();
 
-        tmpGraphics.drawImage(Utils.resizeImage(background, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT), null, 0, 0);
+        tmpGraphics.drawImage(Utils.resizeImage(Jeopardy.BACKGROUND, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT), null, 0, 0);
 
         tmpGraphics.drawImage(Utils.resizeImage(logo, Jeopardy.WIN_WIDTH / 2, Jeopardy.WIN_HEIGHT / 8), null, Jeopardy.WIN_WIDTH / 4, Jeopardy.WIN_HEIGHT / 16);
 

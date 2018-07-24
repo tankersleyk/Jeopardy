@@ -43,17 +43,6 @@ public class FirstRoundState extends BaseState{
     private static final int CATEGORIES = 5; // 5 categories in a round
     private static final int QUESTIONS_PER_CAT = 5; // 5 questions per category
 
-    private static final BufferedImage background;
-
-    static {
-        try {
-            background = ImageIO.read(new File("data/mmbackground.png"));
-        }
-        catch (IOException e) {
-            throw new RuntimeException("Failed to read in images");
-        }
-    }
-
     private final File questionFile = new File("data/questions.csv");
 
     @SuppressWarnings("serial")
@@ -158,7 +147,7 @@ public class FirstRoundState extends BaseState{
         Graphics2D tmpGraphics = (Graphics2D) tmpImage.getGraphics();
         tmpGraphics.setColor(Utils.BLUE);
 
-        tmpGraphics.drawImage(Utils.resizeImage(background, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT), null, 0, 0);
+        tmpGraphics.drawImage(Utils.resizeImage(Jeopardy.BACKGROUND, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT), null, 0, 0);
 
         // Draw manually instead of JButtons so that text can go to multiple lines - maybe change later by inserting new lines
         for (int i = 0; i < categoryList.size(); i++) { // Categories

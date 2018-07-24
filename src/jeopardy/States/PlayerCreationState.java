@@ -27,17 +27,8 @@ public class PlayerCreationState extends BaseState{
     private JTextField textfield = new JTextField("Enter name...", 0);
     private static final int TEXT_WIDTH = Jeopardy.WIN_WIDTH / 3;
     private static final int TEXT_HEIGHT = 20;
-    private static final BufferedImage background;
-    private boolean hasEntered = false;
 
-    static {
-        try {
-            background = ImageIO.read(new File("data/mmbackground.png"));
-        }
-        catch (IOException e) {
-            throw new RuntimeException("Failed to read in images");
-        }
-    }
+    private boolean hasEntered = false;
 
     /**
      * Create a way for the player to enter a name
@@ -115,7 +106,7 @@ public class PlayerCreationState extends BaseState{
         panel.add(textfield);
         textfield.repaint();
 
-        graphics.drawImage(Utils.resizeImage(background, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT), null, 0, 0);
+        graphics.drawImage(Utils.resizeImage(Jeopardy.BACKGROUND, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT), null, 0, 0);
         Rectangle2D textLocation = new Rectangle2D.Double(
                 Jeopardy.WIN_WIDTH / 2 - TEXT_WIDTH / 2,
                 Jeopardy.WIN_HEIGHT / 2 - TEXT_HEIGHT / 2,

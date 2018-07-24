@@ -2,8 +2,12 @@ package jeopardy;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -16,6 +20,16 @@ import jeopardy.States.MainMenuState;
 public class Jeopardy {
 
     private static Map<String, Boolean> settings;
+    public static final BufferedImage BACKGROUND;
+
+    static {
+        try {
+            BACKGROUND = ImageIO.read(new File("data/background.png"));
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to read in background image");
+        }
+    }
 
     public static int WIN_WIDTH = 1280;
     public static int WIN_HEIGHT = 720;
