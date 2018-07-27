@@ -32,7 +32,7 @@ public class Question {
         this.date = date;
         this.question = question;
         this.answer = answer;
-        if (date.before(pointChange.getTime())) { // On November 26, 2001 point values were doubled
+        if (date.before(pointChange)) { // On November 26, 2001 point values were doubled
             this.points = points * 2;
         }
         else {
