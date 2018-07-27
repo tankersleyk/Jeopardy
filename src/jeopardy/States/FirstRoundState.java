@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import jeopardy.GameButton;
@@ -83,6 +82,24 @@ public class FirstRoundState extends BaseState{
             questions.put(category, pullQuestions(allQuestions, category));
         }
 
+        for (String category : chosenCategories) {
+            while (questions.get(category).size() < 5) { // Less than 5 questions in category
+                // Leaving debug print statements in for now
+                System.out.println("Replacing " + category + " with a new one because it only has " + questions.get(category).size() + " questions!");
+                // Replace this category with a new one
+                questions.remove(category);
+                i = 0;
+                for (String newCategory : categories) {
+                    i+=1;
+                    if (random.nextInt(i) == 0) {
+                        category = newCategory;
+                    }
+                }
+                System.out.println("New category is: " + category);
+                questions.put(category, pullQuestions(allQuestions, category));
+            }
+        }
+
         categoryList = new ArrayList<>();
         for (String category : questions.keySet()) {
             categoryList.add(category);
@@ -106,9 +123,14 @@ public class FirstRoundState extends BaseState{
                         for (GameButton button : questionButtons) {
                             StateStack.removeComponent(button);
                         }
-                        System.out.println("hi");
                         Question question = questions.get(category).get(points);
-                        StateStack.push(QuestionAnsweringState.getInstance(), new StateParams(player, question));
+                        if (question == null) {
+                            System.out.println("err");
+                            StateStack.render();
+                        }
+                        else {
+                            StateStack.push(QuestionAnsweringState.getInstance(), new StateParams(player, question));
+                        }
                     }
                 };
                 questionButtons.add(question);
@@ -185,8 +207,7 @@ public class FirstRoundState extends BaseState{
     /**
      * Pulls 5 questions of increasing value from 5 distinct categories from a list of questions
      * @param questions the list of questions to pull from
-     * @param category the category to pull questions from, must be in the categories set and must contain at least 
-     *          one question of the corresponding category for each respective price TODO reword 
+     * @param category the category to pull questions from
      * @return the randomly selected questions
      */
     @SuppressWarnings("serial")
@@ -202,11 +223,31 @@ public class FirstRoundState extends BaseState{
         Random random = new Random();
 
         for (Question question : questions) {
-            if (question.getCategory().equals(category) && randomMap.containsKey(question.getPoints())) { // data uses values gained from daily doubles - remove most of those
+            if (question.getCategory().equals(category) && randomMap.containsKey(question.getPoints())) {
                 int points = question.getPoints();
                 randomMap.put(points, randomMap.get(points) + 1);
                 if (random.nextInt(randomMap.get(points)) == 0) { // swap with probability 1/i, 
                     pulledQuestions.put(points, question);
+                }
+            }
+        }
+
+        // Handle missing values due to daily double values
+        int replaceValue = 0;
+        for (int points : randomMap.keySet()) {
+            if (randomMap.get(points) == 0) {
+                replaceValue = points;
+                break;
+            }
+        }
+
+        if (replaceValue != 0) {
+            for (Question question : questions) {
+                // Not already present, and is matching category
+                if (!pulledQuestions.values().contains(question) && question.getCategory().equals(category)) {
+                    // Will add question assuming its missing value - will not be accurate 100% of the time, but close enough
+                    pulledQuestions.put(replaceValue, question);
+                    break;
                 }
             }
         }
