@@ -87,7 +87,66 @@ public class Question {
      * @param guess the contestant's guess 
      * @return true iff the guess is an acceptable answer to this question
      */
-    public Boolean acceptAnswer(String guess) { // numbers written out vs numerically, parentheses in answers, minor typos, etc.
-        return guess.toLowerCase().equals(answer.toLowerCase()); //placeholder for now
+    public Boolean acceptAnswer(String guess) {
+        // TODO: numbers numerical vs written out, "or" in answer, difference in how parentheses at start vs. end are handled in jeopardy answers?
+        String strippedGuess = Utils.stripSymbols(Utils.stripArticles(guess.toLowerCase()));
+        String strippedAnswer = Utils.stripSymbols(Utils.stripArticles(answer.toLowerCase()));
+
+        try {
+            String[] answers = parenthesesCheck(Utils.stripArticles(answer));
+            String answer1 = Utils.stripSymbols(answers[0]);
+            String answer2 = Utils.stripSymbols(answers[1]);
+
+            if (Utils.editDistance(strippedGuess, answer1) <= answer1.length() / 5 ||
+                    Utils.editDistance(strippedGuess, answer2) <= answer2.length() / 5) {
+                return true;
+            }
+        }
+
+        catch (IllegalArgumentException e) {
+
+        }
+
+        return Utils.editDistance(strippedGuess, strippedAnswer) <= answer.length() / 5; // one typo per 5 characters
+    }
+
+    /**
+     * Splits an answer containing parentheses into two separate strings - those within the parentheses and those out of it
+     * @param answer the answer to perform this check on
+     * @return an array of two strings - the string not in the parentheses and the string in the parentheses
+     * @throws IllegalArgumentException if the answer does not contain both a closing and opening parentheses
+     */
+    private static String[] parenthesesCheck(String answer) throws IllegalArgumentException {
+        // Will cause issues if parentheses aren't at beginning or end
+        String[] answers = new String[2];
+
+        int startIndex = Integer.MAX_VALUE;
+        int endIndex = Integer.MAX_VALUE;
+
+        for (int i = 0; i < answer.length(); i++) {
+            if (answer.charAt(i) == '(') {
+                startIndex = i;
+            }
+
+            else if (answer.charAt(i) == ')') {
+                endIndex = i;
+            }
+        }
+
+        if (startIndex == 0) { // string starts with ()
+            answers[0] = answer.substring(startIndex + 1, endIndex);
+            answers[1] = answer.substring(endIndex + 1);
+        }
+
+        else if (endIndex == answer.length() -1) { // string ends with ()
+            answers[0] = answer.substring(0, startIndex);
+            answers[1] = answer.substring(startIndex + 1, endIndex);
+        }
+
+        else {
+            throw new IllegalArgumentException();
+        }
+
+        return answers;
     }
 }

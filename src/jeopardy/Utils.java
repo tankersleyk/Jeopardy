@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,6 +19,13 @@ public final class Utils {
 
     // Useful keyCodes
     public final static int ENTER_KEY = 10;
+
+    static List<String> articles = new ArrayList<>();
+    static {
+        articles.add("a");
+        articles.add("an");
+        articles.add("the");
+    }
 
     /**
      * Draw a string that is centered in some given rectangle
@@ -109,5 +117,78 @@ public final class Utils {
         s.deleteCharAt(s.length()-1); // remove last newline char
 
         return s.toString();
+    }
+
+    /**
+     * Calculate the edit distance between two strings
+     * @param s1 the first string, to compare with s2
+     * @param s2 the second string, to compare with s1
+     * @return the edit distance between s1 and s2
+     */
+    public static int editDistance(String s1, String s2) {
+        int n = s1.length();
+        int m = s2.length();
+
+        int changes[][] = new int[n+1][m+1];
+
+        for (int i = 0; i <= n; i++) {
+            for (int j = 0; j <= m; j++) {
+                if (i == 0) {
+                    changes[i][j] = j;
+                }
+
+                else if (j == 0) {
+                    changes[i][j] = i;
+                }
+
+                else if (s1.charAt(i - 1) == s2.charAt(j - 1)) {
+                    changes[i][j] = changes[i-1][j-1];
+                }
+
+                else {
+                    changes[i][j] = 1 + Math.min(Math.min(changes[i-1][j], changes[i][j-1]), changes[i-1][j-1]);
+                }
+            }
+        }
+
+        return changes[n][m];
+    }
+
+    /**
+     * Removes all symbols, including spaces, from a string. Leaves only alphanumeric characters
+     * @param s the string to strip symbols from
+     * @return a new string that is the same as s with its symbols removed
+     */
+    public static String stripSymbols(String s) {
+        StringBuilder newString = new StringBuilder();
+
+        for (char c : s.toCharArray()) {
+            int asciiIndex = (int) c;
+            if ((asciiIndex >= 48 && asciiIndex <= 57) ||  // number
+                    (asciiIndex >= 65 && asciiIndex <= 90) ||  // Uppercase letter
+                    (asciiIndex >= 97 && asciiIndex <= 122)) { // Lowercase letter
+                newString.append(c);
+            }
+        }
+
+        return newString.toString();
+    }
+
+    /**
+     * Removes the most common articles ("a", "an", "the") from a string
+     * @param s the string to strip articles from
+     * @return a new string that is the same as s with its articles removed
+     */
+    public static String stripArticles(String s) {
+
+        String newString = s;
+
+        for (String article : articles) {
+            if (s.length() >= article.length() + 1 && s.substring(0, article.length() + 1).toLowerCase().equals(article + " ")) {
+                newString = s.substring(article.length() + 1);
+            }
+        }
+
+        return newString;
     }
 }
