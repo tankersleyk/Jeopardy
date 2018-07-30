@@ -38,9 +38,11 @@ public class QuestionAnsweringState extends BaseState{
         answerField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                answerField.setText("");
-                answerField.setForeground(Color.BLACK);
-                hasEntered = true;
+                if (!hasEntered) {
+                    answerField.setText("");
+                    answerField.setForeground(Color.BLACK);
+                    hasEntered = true;
+                }
             }
 
             @Override
@@ -64,9 +66,10 @@ public class QuestionAnsweringState extends BaseState{
                     if (guess.length() > 0) {
                         if (question.acceptAnswer(guess)) {
                             player.addMoney(question.getPoints());
+                            System.out.println("Right!");
                         }
                         else {
-
+                            System.out.println("Right answer: " + question.getAnswer());
                         }
                         StateStack.pop(); // Exit player creation state
                         StateStack.removeComponent(answerField);
