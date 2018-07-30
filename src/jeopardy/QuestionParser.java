@@ -74,9 +74,6 @@ public class QuestionParser {
                 questions.add(new Question(round, category, date, question, answer, value));
             }
         }
-
-        System.out.println("Done!");
-        System.out.println(questions.size());
         br.close();
         return questions;
     }
