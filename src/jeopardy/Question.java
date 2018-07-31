@@ -16,7 +16,7 @@ public class Question {
     private final String question;
     private final String answer;
     private final int points;
-    private static final Calendar pointChange = new GregorianCalendar(2001, 10, 26);
+    private static final Calendar pointChange = new GregorianCalendar(2001, 11, 26);
 
     /**
      * Create a new Question
