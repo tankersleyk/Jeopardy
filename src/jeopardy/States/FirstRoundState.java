@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import jeopardy.GameButton;
@@ -31,6 +32,7 @@ import jeopardy.Utils;
 public class FirstRoundState extends BaseState{
 
     private static FirstRoundState instance = null;
+    private static final BufferedImage PODIUM;
     private final Round round = Round.JEOPARDY;
     private Map<String, Map<Integer, Question>> questions;
 
@@ -44,6 +46,15 @@ public class FirstRoundState extends BaseState{
     private static final int QUESTIONS_PER_CAT = 5; // 5 questions per category
 
     private final File questionFile = new File("data/questions.csv");
+
+    static {
+        try {
+            PODIUM = ImageIO.read(new File("data/podium.png"));
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to read in podium");
+        }
+    }
 
     @SuppressWarnings("serial")
     private FirstRoundState() {
@@ -114,9 +125,9 @@ public class FirstRoundState extends BaseState{
                 int points = value * 200;
                 GameButton question = new GameButton(
                         SPACING + i*((Jeopardy.WIN_WIDTH - SPACING * (CATEGORIES + 1))/CATEGORIES + SPACING),
-                        SPACING + value*((Jeopardy.WIN_HEIGHT - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1) + SPACING),
+                        SPACING + value*((int) ((0.8 * Jeopardy.WIN_HEIGHT) - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1) + SPACING),
                         (Jeopardy.WIN_WIDTH - SPACING * (CATEGORIES + 1))/CATEGORIES,
-                        (Jeopardy.WIN_HEIGHT - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1),
+                        ((int) (Jeopardy.WIN_HEIGHT * 0.8) - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1),
                         Utils.BLUE, Utils.ORANGE, "$" + Integer.toString(points), 50) {
                     @Override
                     public void isClicked() {
@@ -185,13 +196,23 @@ public class FirstRoundState extends BaseState{
 
         tmpGraphics.drawImage(Utils.resizeImage(Jeopardy.BACKGROUND, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT), null, 0, 0);
 
+        tmpGraphics.drawImage(Utils.resizeImage(PODIUM, PODIUM.getWidth(), (int) (Jeopardy.WIN_HEIGHT * 0.2)), null, Jeopardy.WIN_WIDTH / 2 - PODIUM.getWidth() / 2, (int) (Jeopardy.WIN_HEIGHT * 0.8));
+
+        Utils.drawCenteredString(tmpGraphics, "$" + player.getMoney(), new Rectangle2D.Double(
+                // TODO: calculate this more exactly
+                Jeopardy.WIN_WIDTH / 2 - PODIUM.getWidth() / 2,
+                Jeopardy.WIN_HEIGHT * 0.8 + PODIUM.getHeight() / 10,
+                PODIUM.getWidth(),
+                PODIUM.getHeight() / 4.75
+                ), Color.WHITE, 16);
+
         // Draw manually instead of JButtons so that text can go to multiple lines - maybe change later by inserting new lines
         for (int i = 0; i < categoryList.size(); i++) { // Categories
             Rectangle2D categoryBox = new Rectangle2D.Double(
                     SPACING + i*((Jeopardy.WIN_WIDTH - SPACING * (CATEGORIES + 1))/CATEGORIES + SPACING),
                     SPACING,
                     (Jeopardy.WIN_WIDTH - SPACING * (CATEGORIES + 1))/CATEGORIES,
-                    (Jeopardy.WIN_HEIGHT - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1));
+                    (Jeopardy.WIN_HEIGHT * .8 - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1));
             tmpGraphics.fill(categoryBox);
             Utils.drawCenteredString(tmpGraphics, categoryList.get(i), categoryBox, Color.WHITE, 14);
         }
