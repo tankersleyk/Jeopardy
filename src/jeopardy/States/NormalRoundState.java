@@ -29,11 +29,11 @@ import jeopardy.StateParams;
 import jeopardy.StateStack;
 import jeopardy.Utils;
 
-public class FirstRoundState extends BaseState{
+public class NormalRoundState extends BaseState{
 
-    private static FirstRoundState instance = null;
+    private static NormalRoundState instance = null;
     private static final BufferedImage PODIUM;
-    private final Round round = Round.JEOPARDY;
+    private static Round round = Round.JEOPARDY;
     private Map<String, Map<Integer, Question>> questions;
 
     private List<GameButton> questionButtons;
@@ -57,7 +57,7 @@ public class FirstRoundState extends BaseState{
     }
 
     @SuppressWarnings("serial")
-    private FirstRoundState() {
+    private NormalRoundState() {
         List<Question> allQuestions;
         try {
             allQuestions = QuestionParser.parse(questionFile, round);
@@ -121,8 +121,9 @@ public class FirstRoundState extends BaseState{
         for (i = 0; i < categoryList.size(); i++) {
             // TODO: Scale font size with screen size
             String category = categoryList.get(i);
+            int multiplyValue = round == Round.JEOPARDY ? 200: 400;
             for (int value = 1; value <= 5; value++) { // Question values
-                int points = value * 200;
+                int points = value * multiplyValue;
                 GameButton question = new GameButton(
                         SPACING + i*((Jeopardy.WIN_WIDTH - SPACING * (CATEGORIES + 1))/CATEGORIES + SPACING),
                         SPACING + value*((int) ((0.8 * Jeopardy.WIN_HEIGHT) - SPACING * (QUESTIONS_PER_CAT + 2))/(QUESTIONS_PER_CAT + 1) + SPACING),
@@ -173,9 +174,9 @@ public class FirstRoundState extends BaseState{
      * 
      * @return instance the singleton FirstRoundState object
      */
-    public static FirstRoundState getInstance() {
+    public static NormalRoundState getInstance() {
         if (instance == null) {
-            instance = new FirstRoundState();
+            instance = new NormalRoundState();
         }
 
         return instance;
@@ -234,12 +235,13 @@ public class FirstRoundState extends BaseState{
     @SuppressWarnings("serial")
     private Map<Integer, Question> pullQuestions(List<Question> questions, String category) {
         Map<Integer, Question> pulledQuestions = new HashMap<>();
+        int multiplyValue = round == Round.JEOPARDY ? 1: 2;
         Map<Integer, Integer> randomMap = new HashMap<Integer, Integer>() {{
-            put(200, 0);
-            put(400, 0);
-            put(600, 0);
-            put(800, 0);
-            put(1000, 0);
+            put(200 * multiplyValue, 0);
+            put(400 * multiplyValue, 0);
+            put(600 * multiplyValue, 0);
+            put(800 * multiplyValue, 0);
+            put(1000 * multiplyValue, 0);
         }};
         Random random = new Random();
 
@@ -275,4 +277,22 @@ public class FirstRoundState extends BaseState{
         return pulledQuestions;
     }
 
+    @Override
+    public void returnToState() {
+        if (questionButtons.size() == 0) {
+            StateStack.pop();
+            instance = null;
+            if (round == Round.JEOPARDY) {
+                round = Round.DOUBLE_JEOPARDY;
+                StateStack.push(NormalRoundState.getInstance(), new StateParams(player));
+            }
+            else {
+                round = Round.JEOPARDY;
+                StateStack.push(MainMenuState.getInstance()); // TODO: replace with Final Jeopardy
+            }
+        }
+        else {
+            StateStack.render();
+        }
+    }
 }

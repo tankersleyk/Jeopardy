@@ -44,4 +44,9 @@ public interface State {
      */
     public void exit();
 
+    /**
+     * Called when the state is returned to
+     */
+    public void returnToState();
+
 }

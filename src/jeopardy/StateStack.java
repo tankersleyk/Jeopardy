@@ -56,7 +56,7 @@ public class StateStack {
         states.peek().exit();
         states.pop();
         if (states.size() > 0 ) {
-            StateStack.render();
+            states.peek().returnToState();
         }
     }
 

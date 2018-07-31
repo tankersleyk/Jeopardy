@@ -7,11 +7,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -69,7 +65,7 @@ public class PlayerCreationState extends BaseState{
                     if (name.length() > 0) {
                         StateStack.pop(); // Exit player creation state
                         StateStack.removeComponent(textfield);
-                        StateStack.push(FirstRoundState.getInstance(), new StateParams(new Player(name)));
+                        StateStack.push(NormalRoundState.getInstance(), new StateParams(new Player(name)));
                         textfield.setText("Enter name...");
                         hasEntered = false;
                     }

@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import jeopardy.StateParams;
+import jeopardy.StateStack;
 
 /**
  * An empty state for other states to extend so that they may have empty methods
@@ -35,6 +36,11 @@ public class BaseState implements State{
     @Override
     public void exit() {
 
+    }
+
+    @Override
+    public void returnToState() {
+        StateStack.render();
     }
 
 }
