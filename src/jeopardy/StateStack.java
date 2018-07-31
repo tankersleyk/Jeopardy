@@ -84,4 +84,12 @@ public class StateStack {
     public static void removeComponent(Component component) {
         panel.remove(component);
     }
+
+    /**
+     * Get the panel that the state stack uses for rendering
+     * @return the panel used by the state stack
+     */
+    public static JPanel getPanel() {
+        return StateStack.panel;
+    }
 }

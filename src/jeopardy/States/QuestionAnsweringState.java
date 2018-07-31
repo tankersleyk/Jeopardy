@@ -7,6 +7,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -64,17 +65,7 @@ public class QuestionAnsweringState extends BaseState{
                 if (keyCode == Utils.ENTER_KEY && hasEntered) {
                     String guess = answerField.getText();
                     if (guess.length() > 0) {
-                        if (question.acceptAnswer(guess)) {
-                            player.addMoney(question.getPoints());
-                            System.out.println("Right!");
-                        }
-                        else {
-                            System.out.println("Right answer: " + question.getAnswer());
-                        }
-                        StateStack.pop(); // Exit player creation state
-                        StateStack.removeComponent(answerField);
-                        answerField.setText("Enter answer...");
-                        hasEntered = false;
+                        answerSubmit(guess);
                     }
                     else {
                         // TODO: add error message
@@ -118,5 +109,51 @@ public class QuestionAnsweringState extends BaseState{
                 TEXT_WIDTH, Jeopardy.WIN_HEIGHT / 2 - TEXT_HEIGHT / 2 + Jeopardy.WIN_HEIGHT / (TEXT_HEIGHT / 2));
 
         Utils.drawCenteredString(graphics, question.getQuestion(), textLocation, Color.WHITE, 50);
+    }
+
+    private void answerSubmit(String guess) {
+        StateStack.removeComponent(answerField);
+        JPanel panel = StateStack.getPanel();
+        Graphics2D graphics = (Graphics2D) panel.getGraphics();
+        BufferedImage tmpImage = new BufferedImage(Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+        Graphics2D tmpGraphics = (Graphics2D) tmpImage.getGraphics();
+
+        tmpGraphics.drawImage(Utils.resizeImage(Jeopardy.BACKGROUND, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT), null, 0, 0);
+
+        String correctnessString;
+        Color correctnessColor;
+
+        if (question.acceptAnswer(guess)) {
+            player.addMoney(question.getPoints());
+            correctnessString = "Correct";
+            correctnessColor = Color.GREEN;
+        }
+        else {
+            correctnessString = "Incorrect";
+            correctnessColor = Color.RED;
+        } 
+
+        Utils.drawCenteredString(tmpGraphics, correctnessString, new Rectangle2D.Double(
+                0, 0, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT / 3
+                ), correctnessColor, 50);
+
+        Utils.drawCenteredString(tmpGraphics, "Your answer: " + guess, new Rectangle2D.Double(
+                0, Jeopardy.WIN_HEIGHT / 3, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT / 3
+                ), Color.WHITE, 30);
+
+        Utils.drawCenteredString(tmpGraphics, "Correct answer: " + question.getAnswer(), new Rectangle2D.Double(
+                0, 2 * Jeopardy.WIN_HEIGHT / 3, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT / 3
+                ), Color.WHITE, 30);
+
+        graphics.drawImage(tmpImage, null, 0, 0);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        StateStack.pop(); // Exit player creation state
+        StateStack.removeComponent(answerField);
+        answerField.setText("Enter answer...");
+        hasEntered = false;
     }
 }
