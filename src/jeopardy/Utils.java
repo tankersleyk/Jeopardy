@@ -25,6 +25,9 @@ public final class Utils {
         articles.add("a");
         articles.add("an");
         articles.add("the");
+        articles.add("your");
+        articles.add("his");
+        articles.add("her");
     }
 
     /**

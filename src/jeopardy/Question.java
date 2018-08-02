@@ -88,7 +88,7 @@ public class Question {
      * @return true iff the guess is an acceptable answer to this question
      */
     public Boolean acceptAnswer(String guess) {
-        // TODO: numbers numerical vs written out, "or" in answer, difference in how parentheses at start vs. end are handled in jeopardy answers?
+        // TODO: numbers numerical vs written out, "or" in answer, difference in how parentheses at start vs. end are handled in jeopardy answers?, /
         String strippedGuess = Utils.stripSymbols(Utils.stripArticles(guess.toLowerCase()));
         String strippedAnswer = Utils.stripSymbols(Utils.stripArticles(answer.toLowerCase()));
 

@@ -24,6 +24,7 @@ public class QuestionAnsweringState extends BaseState{
     private static QuestionAnsweringState instance = null;
     private Question question;
     private Player player;
+    private int value;
 
     private JTextField answerField = new JTextField("Enter answer...", 0);
     private static final int TEXT_WIDTH = Jeopardy.WIN_WIDTH / 3;
@@ -64,12 +65,7 @@ public class QuestionAnsweringState extends BaseState{
                 int keyCode = arg0.getKeyCode();
                 if (keyCode == Utils.ENTER_KEY && hasEntered) {
                     String guess = answerField.getText();
-                    if (guess.length() > 0) {
-                        answerSubmit(guess);
-                    }
-                    else {
-                        // TODO: add error message
-                    }
+                    answerSubmit(guess);
                 }
             }
 
@@ -92,6 +88,7 @@ public class QuestionAnsweringState extends BaseState{
     public void enter(StateParams params) {
         this.question = params.QUESTION;
         this.player = params.PLAYER;
+        this.value = params.QUESTION_VALUE;
     }
 
     @Override
@@ -104,9 +101,10 @@ public class QuestionAnsweringState extends BaseState{
 
         graphics.drawImage(Utils.resizeImage(Jeopardy.BACKGROUND, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT), null, 0, 0);
         Rectangle2D textLocation = new Rectangle2D.Double(
-                Jeopardy.WIN_WIDTH / 2 - TEXT_WIDTH / 2,
                 0,
-                TEXT_WIDTH, Jeopardy.WIN_HEIGHT / 2 - TEXT_HEIGHT / 2 + Jeopardy.WIN_HEIGHT / (TEXT_HEIGHT / 2));
+                0,
+                Jeopardy.WIN_WIDTH,
+                Jeopardy.WIN_HEIGHT / 2 - TEXT_HEIGHT / 2 + Jeopardy.WIN_HEIGHT / (TEXT_HEIGHT / 2));
 
         Utils.drawCenteredString(graphics, question.getQuestion(), textLocation, Color.WHITE, 50);
     }
@@ -123,15 +121,22 @@ public class QuestionAnsweringState extends BaseState{
         String correctnessString;
         Color correctnessColor;
 
-        if (question.acceptAnswer(guess)) {
-            player.addMoney(question.getPoints());
-            correctnessString = "Correct";
-            correctnessColor = Color.GREEN;
-        }
-        else {
+        if (guess.length() == 0) {
             correctnessString = "Incorrect";
             correctnessColor = Color.RED;
-        } 
+        }
+        else {
+            if (question.acceptAnswer(guess)) {
+                player.addMoney(value);
+                correctnessString = "Correct";
+                correctnessColor = Color.GREEN;
+            }
+            else {
+                player.subtractMoney(value);
+                correctnessString = "Incorrect";
+                correctnessColor = Color.RED;
+            }
+        }
 
         Utils.drawCenteredString(tmpGraphics, correctnessString, new Rectangle2D.Double(
                 0, 0, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT / 3

@@ -199,7 +199,9 @@ public class NormalRoundState extends BaseState{
 
         tmpGraphics.drawImage(Utils.resizeImage(PODIUM, PODIUM.getWidth(), (int) (Jeopardy.WIN_HEIGHT * 0.2)), null, Jeopardy.WIN_WIDTH / 2 - PODIUM.getWidth() / 2, (int) (Jeopardy.WIN_HEIGHT * 0.8));
 
-        Utils.drawCenteredString(tmpGraphics, "$" + player.getMoney(), new Rectangle2D.Double(
+        String moneyString = player.getMoney() >= 0 ? "$" + player.getMoney() : "-$" + (0 - player.getMoney());
+
+        Utils.drawCenteredString(tmpGraphics, moneyString, new Rectangle2D.Double(
                 // TODO: calculate this more exactly
                 Jeopardy.WIN_WIDTH / 2 - PODIUM.getWidth() / 2,
                 Jeopardy.WIN_HEIGHT * 0.8 + PODIUM.getHeight() / 10,
@@ -288,7 +290,12 @@ public class NormalRoundState extends BaseState{
             }
             else {
                 round = Round.JEOPARDY;
-                StateStack.push(MainMenuState.getInstance()); // TODO: replace with Final Jeopardy
+                if (player.getMoney() > 0) {
+                    StateStack.push(FinalJeopardyState.getInstance(), new StateParams(player));
+                }
+                else {
+                    StateStack.push(MainMenuState.getInstance());
+                }
             }
         }
         else {

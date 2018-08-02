@@ -32,4 +32,12 @@ public class Player {
     public void addMoney(int value) {
         this.money += value;
     }
+
+    /**
+     * Subtract money from the player's count
+     * @param value the amount of money to subtract
+     */
+    public void subtractMoney(int value) {
+        this.money -= value;
+    }
 }
