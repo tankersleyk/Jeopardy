@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 import jeopardy.Jeopardy;
 import jeopardy.Player;
 import jeopardy.Question;
+import jeopardy.Round;
 import jeopardy.StateParams;
 import jeopardy.StateStack;
 import jeopardy.Utils;
@@ -65,7 +66,8 @@ public class QuestionAnsweringState extends BaseState{
                 int keyCode = arg0.getKeyCode();
                 if (keyCode == Utils.ENTER_KEY && hasEntered) {
                     String guess = answerField.getText();
-                    answerSubmit(guess);
+                    if (guess.length() > 0 || !question.getRound().equals(Round.FINAL_JEOPARDY)) // in final jeopardy, must submit an answer
+                        answerSubmit(guess);
                 }
             }
 
