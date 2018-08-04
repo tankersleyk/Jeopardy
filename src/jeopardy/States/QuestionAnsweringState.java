@@ -9,7 +9,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -35,7 +41,6 @@ public class QuestionAnsweringState extends BaseState{
     private static final int TEXT_WIDTH = Jeopardy.WIN_WIDTH / 3;
     private static final int TEXT_HEIGHT = 20;
     private boolean hasEntered = false;
-    private static long answerTime;
 
     private QuestionAnsweringState() {
         answerField.setBounds(
@@ -72,8 +77,7 @@ public class QuestionAnsweringState extends BaseState{
                 if (keyCode == Utils.ENTER_KEY && hasEntered) {
                     String guess = answerField.getText();
                     if (guess.length() > 0 || !question.getRound().equals(Round.FINAL_JEOPARDY)) // in final jeopardy, must submit an answer
-                        answerTime = System.currentTimeMillis();
-                    answerSubmit(guess);
+                        answerSubmit(guess);
                 }
             }
 
@@ -114,7 +118,73 @@ public class QuestionAnsweringState extends BaseState{
                 Jeopardy.WIN_WIDTH,
                 Jeopardy.WIN_HEIGHT / 2 - TEXT_HEIGHT / 2 + Jeopardy.WIN_HEIGHT / (TEXT_HEIGHT / 2));
 
-        Utils.drawCenteredString(graphics, question.getQuestion(), textLocation, Color.WHITE, 50);
+        renderQuestion(question.getQuestion(), panel, textLocation);
+        //        Utils.drawCenteredString(graphics, question.getQuestion(), textLocation, Color.WHITE, 50);
+    }
+
+    private void renderQuestion(String question, JPanel panel, Rectangle2D textLocation) {
+        Graphics2D graphics = (Graphics2D) panel.getGraphics();
+
+        StringBuilder drawnQuestion = new StringBuilder();
+        List<URL> URLs = new ArrayList<>();
+
+        for (int i = 0; i < question.length(); i++) {
+            if (question.charAt(i) == '<') {
+                if (question.charAt(i+1) == '/') {
+                    drawnQuestion.append(" ");
+                    i+=4;
+                }
+                else {
+                    StringBuilder url = new StringBuilder();
+                    while(question.charAt(i) != '"') {
+                        i+=1;
+                    }
+
+                    i+=2;
+
+                    while (question.charAt(i) != '"') {
+                        url.append(question.charAt(i));
+                        i+=1;
+                    }
+
+                    i+=3;
+                    try {
+                        URLs.add(new URL(url.toString()));
+                    } catch (MalformedURLException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+            else {
+                drawnQuestion.append(question.charAt(i));
+            }
+        }
+
+        String extraInfo = "arget=\"\"_blank\"\">";
+
+        if (drawnQuestion.toString().contains(extraInfo)) {
+            drawnQuestion = new StringBuilder(drawnQuestion.toString().replaceAll(extraInfo, ""));
+        }
+
+        for (URL url : URLs) {
+            // TODO: Handle more than one image
+            if (url.getPath().contains("jpg")) { // Image
+                try {
+                    graphics.drawImage(Utils.resizeImage(ImageIO.read(url), TEXT_WIDTH, Jeopardy.WIN_HEIGHT - (Jeopardy.WIN_HEIGHT / 2 - TEXT_HEIGHT / 2 + Jeopardy.WIN_HEIGHT / (TEXT_HEIGHT / 2) + TEXT_HEIGHT))
+                            , null, 0, Jeopardy.WIN_HEIGHT / 2 - TEXT_HEIGHT / 2 + Jeopardy.WIN_HEIGHT / (TEXT_HEIGHT / 2) + TEXT_HEIGHT);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+            else if (url.getPath().contains("wmv")) { // audio
+
+            }
+        }
+
+        Utils.drawCenteredString(graphics, drawnQuestion.toString(), textLocation, Color.WHITE, 50);
     }
 
     private void answerSubmit(String guess) {
@@ -157,7 +227,6 @@ public class QuestionAnsweringState extends BaseState{
         Utils.drawCenteredString(tmpGraphics, "Correct answer: " + question.getAnswer(), new Rectangle2D.Double(
                 0, 2 * Jeopardy.WIN_HEIGHT / 3, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT / 3
                 ), Color.WHITE, 30);
-
 
         Utils.drawCenteredString(tmpGraphics, "Press Enter to continue...", new Rectangle2D.Double(
                 0, 9 * Jeopardy.WIN_HEIGHT / 10, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT / 10
