@@ -24,8 +24,9 @@ public class MainMenuState extends BaseState{
     private final List<GameButton> buttons;
     private static final BufferedImage logo;
 
-    private final int BUTTON_WIDTH = 300;
-    private final int BUTTON_HEIGHT = 100;
+    private final int BUTTON_WIDTH;
+    private final int BUTTON_HEIGHT;
+    private final int BUTTON_SPACING = 20;
 
     static {
         try {
@@ -41,11 +42,16 @@ public class MainMenuState extends BaseState{
      */
     @SuppressWarnings("serial")
     private MainMenuState() {
+        final int LOGO_HEIGHT = Jeopardy.WIN_HEIGHT / 8 + Jeopardy.WIN_HEIGHT / 16;
+        final int LEFTOVER_HEIGHT = Jeopardy.WIN_HEIGHT - LOGO_HEIGHT;
+        BUTTON_WIDTH = Jeopardy.WIN_WIDTH / 4;
+        BUTTON_HEIGHT = (LEFTOVER_HEIGHT - BUTTON_SPACING * 5) / 4;
+
         buttons = new ArrayList<>();
         int x = (Jeopardy.WIN_WIDTH-BUTTON_WIDTH)/2;
 
-        int y = (Jeopardy.WIN_HEIGHT - BUTTON_HEIGHT * 2) / 3;
-        GameButton singleRect = new GameButton(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, Utils.BLUE, Color.WHITE, "Single Player", 20) {
+        int y = LOGO_HEIGHT + BUTTON_SPACING;
+        GameButton singleButton = new GameButton(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, Utils.BLUE, Color.WHITE, "Single Player", 20) {
             @Override
             public void isClicked() {
                 StateStack.pop(); // exit main menu state
@@ -53,8 +59,16 @@ public class MainMenuState extends BaseState{
             }
         };
 
-        y = 2 * (Jeopardy.WIN_HEIGHT - BUTTON_HEIGHT * 2) / 3 + BUTTON_HEIGHT;
-        GameButton multiRect = new GameButton(x, y, BUTTON_WIDTH, BUTTON_HEIGHT,  Utils.BLUE, Color.WHITE, "Multiplayer", 20) {
+        y = LOGO_HEIGHT + BUTTON_SPACING * 2 + BUTTON_HEIGHT;
+        GameButton settingsButton = new GameButton(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, Utils.BLUE, Color.WHITE, "Settings", 20) {
+            @Override
+            public void isClicked() {
+                StateStack.push(SettingsState.getInstance());
+            }
+        };
+
+        y = LOGO_HEIGHT + BUTTON_SPACING * 3 + BUTTON_HEIGHT * 2;
+        GameButton multiButton = new GameButton(x, y, BUTTON_WIDTH, BUTTON_HEIGHT,  Utils.BLUE, Color.WHITE, "Multiplayer", 20) {
             @Override
             public void isClicked() {
                 StateStack.pop(); // exit main menu state
@@ -62,8 +76,18 @@ public class MainMenuState extends BaseState{
             }
         };
 
-        buttons.add(singleRect);
-        buttons.add(multiRect);
+        y = LOGO_HEIGHT + BUTTON_SPACING * 4 + BUTTON_HEIGHT * 3;
+        GameButton quitButton = new GameButton(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, Utils.BLUE, Color.WHITE, "Quit", 20) {
+            @Override
+            public void isClicked() {
+                System.exit(0);
+            }
+        };
+
+        buttons.add(singleButton);
+        buttons.add(settingsButton);
+        buttons.add(multiButton);
+        buttons.add(quitButton);
 
         // Set up button highlighting and clicking
         for (GameButton button : buttons) {
