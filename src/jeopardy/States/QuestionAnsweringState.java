@@ -2,6 +2,7 @@ package jeopardy.States;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -9,8 +10,11 @@ import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 
 import jeopardy.Jeopardy;
 import jeopardy.Player;
@@ -31,6 +35,7 @@ public class QuestionAnsweringState extends BaseState{
     private static final int TEXT_WIDTH = Jeopardy.WIN_WIDTH / 3;
     private static final int TEXT_HEIGHT = 20;
     private boolean hasEntered = false;
+    private static long answerTime;
 
     private QuestionAnsweringState() {
         answerField.setBounds(
@@ -67,7 +72,8 @@ public class QuestionAnsweringState extends BaseState{
                 if (keyCode == Utils.ENTER_KEY && hasEntered) {
                     String guess = answerField.getText();
                     if (guess.length() > 0 || !question.getRound().equals(Round.FINAL_JEOPARDY)) // in final jeopardy, must submit an answer
-                        answerSubmit(guess);
+                        answerTime = System.currentTimeMillis();
+                    answerSubmit(guess);
                 }
             }
 
@@ -124,7 +130,7 @@ public class QuestionAnsweringState extends BaseState{
         Color correctnessColor;
 
         if (guess.length() == 0) {
-            correctnessString = "Incorrect";
+            correctnessString = "Did not guess";
             correctnessColor = Color.RED;
         }
         else {
@@ -152,15 +158,33 @@ public class QuestionAnsweringState extends BaseState{
                 0, 2 * Jeopardy.WIN_HEIGHT / 3, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT / 3
                 ), Color.WHITE, 30);
 
+
+        Utils.drawCenteredString(tmpGraphics, "Press Enter to continue...", new Rectangle2D.Double(
+                0, 9 * Jeopardy.WIN_HEIGHT / 10, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT / 10
+                ), Color.WHITE, 20);
+
+        panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ENTER"), "exitQuestion");
+        panel.getActionMap().put("exitQuestion", new exitQuestionState(panel));
+
         graphics.drawImage(tmpImage, null, 0, 0);
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    }
+
+    @SuppressWarnings("serial")
+    private class exitQuestionState extends AbstractAction {
+
+        private JPanel panel;
+
+        exitQuestionState(JPanel panel) {
+            this.panel = panel;
         }
-        StateStack.pop(); // Exit player creation state
-        StateStack.removeComponent(answerField);
-        answerField.setText("Enter answer...");
-        hasEntered = false;
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            StateStack.pop(); // Exit player creation state
+            StateStack.removeComponent(answerField);
+            answerField.setText("Enter answer...");
+            hasEntered = false;
+            panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ENTER"), "none");
+        }
     }
 }
