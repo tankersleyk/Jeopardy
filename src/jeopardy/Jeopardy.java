@@ -1,6 +1,5 @@
 package jeopardy;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -34,24 +33,36 @@ public class Jeopardy {
     public static int WIN_WIDTH = 1280;
     public static int WIN_HEIGHT = 720;
 
+    private static JPanel drawingArea;
+    private static JFrame window;
+
     /**
      * Handle the game meta information, including player's settings and server connection
      */
     public static void main(String[] args) {
 
         // Set up the window
-        final JFrame window = new JFrame("Jeopardy");
+        window = new JFrame("Jeopardy");
+        window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Set up the graphics
-        final JPanel drawingArea = new JPanel();
+        drawingArea = new JPanel();
         drawingArea.setLayout(null);
         drawingArea.setPreferredSize(new Dimension(WIN_WIDTH, WIN_HEIGHT));
+
         window.add(drawingArea);
         window.pack();
         window.setVisible(true);
 
         StateStack.changePanel(drawingArea);
         StateStack.push(MainMenuState.getInstance());
+    }
+
+    public static void changeResolution(int width, int height) {
+        WIN_WIDTH = width;
+        WIN_HEIGHT = height;
+        drawingArea.setPreferredSize(new Dimension(WIN_WIDTH, WIN_HEIGHT));
+        window.pack();
     }
 }
