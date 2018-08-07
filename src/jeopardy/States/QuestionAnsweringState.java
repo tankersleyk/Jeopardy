@@ -40,13 +40,12 @@ public class QuestionAnsweringState extends BaseState{
     private JTextField answerField = new JTextField("Enter answer...", 0);
     private static final int TEXT_WIDTH = Jeopardy.WIN_WIDTH / 3;
     private static final int TEXT_HEIGHT = 20;
+    private static final int TEXT_X = Jeopardy.WIN_WIDTH / 2 - TEXT_WIDTH / 2;
+    private static final int TEXT_Y = Jeopardy.WIN_HEIGHT / 2 - TEXT_HEIGHT / 2 + Jeopardy.WIN_HEIGHT / (TEXT_HEIGHT / 2);
     private boolean hasEntered = false;
 
     private QuestionAnsweringState() {
-        answerField.setBounds(
-                Jeopardy.WIN_WIDTH / 2 - TEXT_WIDTH / 2,
-                Jeopardy.WIN_HEIGHT / 2 - TEXT_HEIGHT / 2 + Jeopardy.WIN_HEIGHT / (TEXT_HEIGHT / 2),
-                TEXT_WIDTH, TEXT_HEIGHT);
+        answerField.setBounds(TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
         answerField.setForeground(Color.GRAY);
         answerField.addFocusListener(new FocusListener() {
             @Override
@@ -134,6 +133,9 @@ public class QuestionAnsweringState extends BaseState{
                     drawnQuestion.append(" ");
                     i+=4;
                 }
+                else if (question.charAt(i+1) == 'i') {
+                    i+=3;
+                }
                 else {
                     StringBuilder url = new StringBuilder();
                     while(question.charAt(i) != '"') {
@@ -171,8 +173,8 @@ public class QuestionAnsweringState extends BaseState{
             // TODO: Handle more than one image
             if (url.getPath().contains("jpg")) { // Image
                 try {
-                    graphics.drawImage(Utils.resizeImage(ImageIO.read(url), TEXT_WIDTH, Jeopardy.WIN_HEIGHT - (Jeopardy.WIN_HEIGHT / 2 - TEXT_HEIGHT / 2 + Jeopardy.WIN_HEIGHT / (TEXT_HEIGHT / 2) + TEXT_HEIGHT))
-                            , null, 0, Jeopardy.WIN_HEIGHT / 2 - TEXT_HEIGHT / 2 + Jeopardy.WIN_HEIGHT / (TEXT_HEIGHT / 2) + TEXT_HEIGHT);
+                    graphics.drawImage(Utils.resizeImage(ImageIO.read(url), TEXT_WIDTH, Jeopardy.WIN_HEIGHT - (TEXT_Y + TEXT_HEIGHT))
+                            , null, TEXT_X, TEXT_Y + TEXT_HEIGHT);
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -184,7 +186,7 @@ public class QuestionAnsweringState extends BaseState{
             }
         }
 
-        Utils.drawCenteredString(graphics, drawnQuestion.toString(), textLocation, Color.WHITE, 50);
+        Utils.drawCenteredString(graphics, Utils.stripDoubleQuotes(drawnQuestion.toString()), textLocation, Color.WHITE, 50);
     }
 
     private void answerSubmit(String guess) {
@@ -201,7 +203,7 @@ public class QuestionAnsweringState extends BaseState{
 
         if (guess.length() == 0) {
             correctnessString = "Did not guess";
-            correctnessColor = Color.RED;
+            correctnessColor = Color.YELLOW;
         }
         else {
             if (question.acceptAnswer(guess)) {

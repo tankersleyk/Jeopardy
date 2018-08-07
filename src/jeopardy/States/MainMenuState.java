@@ -24,9 +24,7 @@ public class MainMenuState extends BaseState{
     private final List<GameButton> buttons;
     private static final BufferedImage logo;
 
-    private final int BUTTON_WIDTH;
-    private final int BUTTON_HEIGHT;
-    private final int BUTTON_SPACING = 20;
+    private final int BUTTON_SPACING = 35;
 
     static {
         try {
@@ -44,8 +42,9 @@ public class MainMenuState extends BaseState{
     private MainMenuState() {
         final int LOGO_HEIGHT = Jeopardy.WIN_HEIGHT / 8 + Jeopardy.WIN_HEIGHT / 16;
         final int LEFTOVER_HEIGHT = Jeopardy.WIN_HEIGHT - LOGO_HEIGHT;
-        BUTTON_WIDTH = Jeopardy.WIN_WIDTH / 4;
-        BUTTON_HEIGHT = (LEFTOVER_HEIGHT - BUTTON_SPACING * 5) / 4;
+
+        final int BUTTON_WIDTH = Jeopardy.WIN_WIDTH / 4;
+        final int BUTTON_HEIGHT = (LEFTOVER_HEIGHT - BUTTON_SPACING * 5) / 4;
 
         buttons = new ArrayList<>();
         int x = (Jeopardy.WIN_WIDTH-BUTTON_WIDTH)/2;
@@ -123,7 +122,19 @@ public class MainMenuState extends BaseState{
 
     @Override
     public void render(JPanel panel) {
+        final int LOGO_HEIGHT = Jeopardy.WIN_HEIGHT / 8 + Jeopardy.WIN_HEIGHT / 16;
+        final int LEFTOVER_HEIGHT = Jeopardy.WIN_HEIGHT - LOGO_HEIGHT;
 
+        final int BUTTON_WIDTH = Jeopardy.WIN_WIDTH / 4;
+        final int BUTTON_HEIGHT = (LEFTOVER_HEIGHT - BUTTON_SPACING * 5) / 4;
+
+        int x = (Jeopardy.WIN_WIDTH-BUTTON_WIDTH)/2;
+        int i = 1;
+        for (GameButton button : buttons) {
+            int y = LOGO_HEIGHT + BUTTON_SPACING * i + BUTTON_HEIGHT * (i-1);
+            button.setBounds(x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
+            i+=1;
+        }
         Graphics2D graphics = (Graphics2D) panel.getGraphics();
         // Use temporary image to draw everything all at once to graphics and prevent flickering
         BufferedImage tmpImage = new BufferedImage(Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
@@ -139,5 +150,10 @@ public class MainMenuState extends BaseState{
         }
 
         graphics.drawImage(tmpImage, null, 0, 0);
+    }
+
+    @Override
+    public void exit() {
+        instance = null;
     }
 }
