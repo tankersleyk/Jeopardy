@@ -1,8 +1,10 @@
 package jeopardy;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * A Jeopardy! question
@@ -28,7 +30,7 @@ public class Question {
      */
     public Question(Round round, String category, Calendar date, String question, String answer, int points) {
         this.round = round;
-        this.category = category;
+        this.category = Utils.stripDoubleQuotes(category);
         this.date = date;
         this.question = question;
         this.answer = answer;
@@ -88,12 +90,13 @@ public class Question {
      * @return true iff the guess is an acceptable answer to this question
      */
     public Boolean acceptAnswer(String guess) {
-        // TODO: numbers numerical vs written out, "or" in answer, difference in how parentheses at start vs. end are handled in jeopardy answers?, /
+        // TODO: numbers numerical vs written out, difference in how parentheses at start vs. end are handled in jeopardy answers?
         String strippedGuess = Utils.stripSymbols(Utils.stripArticles(guess.toLowerCase()));
-        String strippedAnswer = Utils.stripSymbols(Utils.stripArticles(answer.toLowerCase()));
+        String noArticles = Utils.stripArticles(answer.toLowerCase());
+        String strippedAnswer = Utils.stripSymbols(noArticles);
 
         try {
-            String[] answers = parenthesesCheck(Utils.stripArticles(answer));
+            String[] answers = parenthesesCheck(noArticles);
             String answer1 = Utils.stripSymbols(answers[0]);
             String answer2 = Utils.stripSymbols(answers[1]);
 
@@ -107,12 +110,70 @@ public class Question {
 
         }
 
-        return Utils.editDistance(strippedGuess, strippedAnswer) <= answer.length() / 5; // one typo per 5 characters
+        if (noArticles.contains(" or ")) {
+            for (String altAnswer : noArticles.split(" or ")) {
+                String answerToCheck = Utils.stripSymbols(altAnswer);
+                if (Utils.editDistance(strippedGuess, answerToCheck) <= answerToCheck.length() / 5) {
+                    return true;
+                }
+            }
+        }
+
+        for (String slashAnswer : slashCheck(noArticles)) {
+            String answerToCheck = Utils.stripSymbols(slashAnswer);
+            if (Utils.editDistance(strippedGuess, answerToCheck) <= answerToCheck.length() / 5) {
+                return true;
+            }
+        }
+
+        if (noArticles.contains(" &" )) {
+            int i = 0;
+            while (noArticles.charAt(i) != '&') {
+                i+=1;
+            }
+            String answerToCheck = Utils.stripSymbols(noArticles.substring(i+1) + noArticles.substring(0, i));
+            if (Utils.editDistance(strippedGuess, answerToCheck) <= answerToCheck.length() / 5) {
+                return true;
+            }
+        }
+
+        return Utils.editDistance(strippedGuess, strippedAnswer) <= strippedAnswer.length() / 5; // one typo per 5 characters
+    }
+
+    private static List<String> slashCheck(String answer) {
+        List<String> answers = new ArrayList<>();
+
+        if (answer.contains("/")) {
+            for (int i = 0; i < answer.length(); i++) {
+                if (answer.charAt(i) == '/') {
+                    int startIndex = i;
+                    while (startIndex > 0 && answer.charAt(startIndex) != ' ') {
+                        startIndex-=1;
+                    }
+                    int endIndex = i;
+                    while (endIndex < answer.length() && answer.charAt(endIndex) != ' ') {
+                        endIndex+=1;
+                    }
+                    String s1 = answer.substring(0, i);
+                    String s2 = answer.substring(0, startIndex) + answer.substring(i+1, endIndex);
+                    for (String otherSplit : slashCheck(answer.substring(endIndex))) {
+                        answers.add(s1 + otherSplit);
+                        answers.add(s2 + otherSplit);
+                    }
+                    break;
+                }
+            }
+        }
+        else {
+            answers.add(answer);
+        }
+
+        return answers;
     }
 
     /**
      * Splits an answer containing parentheses into two separate strings - those within the parentheses and those out of it
-     * @param answer the answer to perform this check on
+     * @param answer the answer to perform this check on, should contain <= 1 set of parentheses
      * @return an array of two strings - the string not in the parentheses and the string in the parentheses
      * @throws IllegalArgumentException if the answer does not contain both a closing and opening parentheses
      */
@@ -130,22 +191,16 @@ public class Question {
 
             else if (answer.charAt(i) == ')') {
                 endIndex = i;
+                break;
             }
         }
 
-        if (startIndex == 0) { // string starts with ()
-            answers[0] = answer.substring(startIndex + 1, endIndex);
-            answers[1] = answer.substring(endIndex + 1);
-        }
-
-        else if (endIndex == answer.length() -1) { // string ends with ()
-            answers[0] = answer.substring(0, startIndex);
-            answers[1] = answer.substring(startIndex + 1, endIndex);
-        }
-
-        else {
+        if (startIndex == Integer.MAX_VALUE || endIndex == Integer.MAX_VALUE) {
             throw new IllegalArgumentException();
         }
+
+        answers[0] = answer.substring(startIndex + 1, endIndex);
+        answers[1] = answer.substring(0, startIndex) + answer.substring(endIndex + 1);
 
         return answers;
     }
