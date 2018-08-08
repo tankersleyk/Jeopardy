@@ -134,8 +134,107 @@ class QuestionsTest {
     // answer: contains parenthesis for optional part of answer
     @Test
     void CorrectGuessOptionalParentheses() {
-        Question testQuestion = new Question(Round.JEOPARDY, "Test Category", new GregorianCalendar(2018, 7, 7), "test question", "(test) testing", 0);
-        String guess = "test testi";
+        Question testQuestion = new Question(Round.JEOPARDY, "Test Category", new GregorianCalendar(2018, 7, 7), "test question", "portal (test) testing", 0);
+        String guess = "portal testi";
+        assertTrue(testQuestion.acceptAnswer(guess));
+    }
+
+    // guess: correct guess
+    // answer: contains / to indicate multiple answers
+    @Test
+    void CorrectGuessBothSidesSlash() {
+        Question testQuestion = new Question(Round.JEOPARDY, "Test Category", new GregorianCalendar(2018, 7, 7), "test question", "test/testing", 0);
+        String guess = "test/testi";
+        assertTrue(testQuestion.acceptAnswer(guess));
+    }
+
+    // guess: correct guess
+    // answer: contains / to indicate multiple answers
+    @Test
+    void CorrectGuessLeftSideSlash() {
+        Question testQuestion = new Question(Round.JEOPARDY, "Test Category", new GregorianCalendar(2018, 7, 7), "test question", "test/testing", 0);
+        String guess = "test";
+        assertTrue(testQuestion.acceptAnswer(guess));
+    }
+
+    // guess: correct guess
+    // answer: contains / to indicate multiple answers
+    @Test
+    void CorrectGuessRightSideSlash() {
+        Question testQuestion = new Question(Round.JEOPARDY, "Test Category", new GregorianCalendar(2018, 7, 7), "test question", "test/testing", 0);
+        String guess = "testing";
+        assertTrue(testQuestion.acceptAnswer(guess));
+    }
+
+    // guess: correct guess
+    // answer: contains / to indicate multiple answers
+    @Test
+    void CorrectGuessMultipleWordBothSidesSlash() {
+        Question testQuestion = new Question(Round.JEOPARDY, "Test Category", new GregorianCalendar(2018, 7, 7), "test question", "portal test/testing here", 0);
+        String guess = "portal test/testing here";
+        assertTrue(testQuestion.acceptAnswer(guess));
+    }
+
+    // guess: correct guess
+    // answer: contains / to indicate multiple answers
+    @Test
+    void CorrectGuessMultipleWordLeftSideSlash() {
+        Question testQuestion = new Question(Round.JEOPARDY, "Test Category", new GregorianCalendar(2018, 7, 7), "test question", "portal test/testing here", 0);
+        String guess = "portal test here";
+        assertTrue(testQuestion.acceptAnswer(guess));
+    }
+
+    // guess: correct guess
+    // answer: contains / to indicate multiple answers
+    @Test
+    void CorrectGuessMultipleWordRightSideSlash() {
+        Question testQuestion = new Question(Round.JEOPARDY, "Test Category", new GregorianCalendar(2018, 7, 7), "test question", "portal test/testing here", 0);
+        String guess = "portal testing here";
+        assertTrue(testQuestion.acceptAnswer(guess));
+    }
+
+    // guess: correct guess
+    // answer: contains or to indicate multiple answers
+    @Test
+    void CorrectGuessBothSidesOr() {
+        Question testQuestion = new Question(Round.JEOPARDY, "Test Category", new GregorianCalendar(2018, 7, 7), "test question", "portal test or testing here", 0);
+        String guess = "portal test or testing here";
+        assertTrue(testQuestion.acceptAnswer(guess));
+    }
+
+    // guess: correct guess
+    // answer: contains or to indicate multiple answers
+    @Test
+    void CorrectGuessLeftSideOr() {
+        Question testQuestion = new Question(Round.JEOPARDY, "Test Category", new GregorianCalendar(2018, 7, 7), "test question", "portal test or testing here", 0);
+        String guess = "portal test";
+        assertTrue(testQuestion.acceptAnswer(guess));
+    }
+
+    // guess: correct guess
+    // answer: contains or to indicate multiple answers
+    @Test
+    void CorrectGuessRightSideOr() {
+        Question testQuestion = new Question(Round.JEOPARDY, "Test Category", new GregorianCalendar(2018, 7, 7), "test question", "portal test or testing here", 0);
+        String guess = "testing here";
+        assertTrue(testQuestion.acceptAnswer(guess));
+    }
+
+    // guess: correct guess
+    // answer: contains or to indicate multiple answers
+    @Test
+    void CorrectGuessSameSideAmpersand() {
+        Question testQuestion = new Question(Round.JEOPARDY, "Test Category", new GregorianCalendar(2018, 7, 7), "test question", "test & testing", 0);
+        String guess = "test & testing";
+        assertTrue(testQuestion.acceptAnswer(guess));
+    }
+
+    // guess: correct guess
+    // answer: contains or to indicate multiple answers
+    @Test
+    void CorrectGuessOppositeSideAmpersand() {
+        Question testQuestion = new Question(Round.JEOPARDY, "Test Category", new GregorianCalendar(2018, 7, 7), "test question", "test & testing", 0);
+        String guess = "testing & test";
         assertTrue(testQuestion.acceptAnswer(guess));
     }
 }
