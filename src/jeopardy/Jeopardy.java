@@ -1,10 +1,10 @@
 package jeopardy;
 
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -18,7 +18,7 @@ import jeopardy.States.MainMenuState;
  */
 public class Jeopardy {
 
-    private static Map<String, Boolean> settings;
+//    private static Map<String, Boolean> settings;
     public static final BufferedImage BACKGROUND;
 
     static {
@@ -42,7 +42,18 @@ public class Jeopardy {
     public static void main(String[] args) {
 
         // Set up the window
-        window = new JFrame("Jeopardy");
+        window = new JFrame("Jeopardy") {
+            @Override
+            public void repaint() {
+                super.repaint();
+                StateStack.render();
+            }
+            @Override
+            public void paint(Graphics g) {
+                super.paint(g);
+                StateStack.render();
+            }
+        };
         window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
