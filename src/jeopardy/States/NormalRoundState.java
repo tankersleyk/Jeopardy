@@ -251,8 +251,10 @@ public class NormalRoundState extends BaseState{
             if (question.getCategory().equals(category) && randomMap.containsKey(question.getPoints())) {
                 int points = question.getPoints();
                 randomMap.put(points, randomMap.get(points) + 1);
-                if (random.nextInt(randomMap.get(points)) == 0) { // swap with probability 1/i, 
-                    pulledQuestions.put(points, question);
+                if (random.nextInt(randomMap.get(points)) == 0) { // swap with probability 1/i,
+                    if (question.checkLinks()) {
+                        pulledQuestions.put(points, question);
+                    }
                 }
             }
         }
@@ -276,6 +278,7 @@ public class NormalRoundState extends BaseState{
                 }
             }
         }
+
         return pulledQuestions;
     }
 

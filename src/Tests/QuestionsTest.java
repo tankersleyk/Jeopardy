@@ -1,5 +1,6 @@
 package Tests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -11,6 +12,24 @@ import jeopardy.Question;
 import jeopardy.Round;
 
 class QuestionsTest {
+
+    // checkLinks()
+
+    /*
+     * TODO partitions
+     * 
+     * 
+     */
+
+    // question has one valid image link
+    @Test
+    void ContainsOneImageLink() {
+        Question testQuestion = new Question(Round.JEOPARDY, "Test Category", new GregorianCalendar(2018, 7, 7), "<a href=\"\"https://cdn.vox-cdn.com/thumbor/Pkmq1nm3skO0-j693JTMd7RL0Zk=/0x0:2012x1341/1200x800/filters:focal(0x0:2012x1341)/cdn.vox-cdn.com/uploads/chorus_image/image/47070706/google2.0.0.jpg\"\" target=\"\"_blank\"\">test question</a>", "test", 0);
+        assertTrue(testQuestion.checkLinks());
+        assertEquals(testQuestion.getQuestion(), "test question");
+    }
+
+    // guessAnswer()
 
     /*
      * Partition the inputs as follows:

@@ -9,13 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -117,76 +111,11 @@ public class QuestionAnsweringState extends BaseState{
                 Jeopardy.WIN_WIDTH,
                 Jeopardy.WIN_HEIGHT / 2 - TEXT_HEIGHT / 2 + Jeopardy.WIN_HEIGHT / (TEXT_HEIGHT / 2));
 
-        renderQuestion(question.getQuestion(), panel, textLocation);
-        //        Utils.drawCenteredString(graphics, question.getQuestion(), textLocation, Color.WHITE, 50);
-    }
-
-    private void renderQuestion(String question, JPanel panel, Rectangle2D textLocation) {
-        Graphics2D graphics = (Graphics2D) panel.getGraphics();
-
-        StringBuilder drawnQuestion = new StringBuilder();
-        List<URL> URLs = new ArrayList<>();
-
-        for (int i = 0; i < question.length(); i++) {
-            if (question.charAt(i) == '<') {
-                if (question.charAt(i+1) == '/') {
-                    drawnQuestion.append(" ");
-                    i+=4;
-                }
-                else if (question.charAt(i+1) == 'i') {
-                    i+=3;
-                }
-                else {
-                    StringBuilder url = new StringBuilder();
-                    while(question.charAt(i) != '"') {
-                        i+=1;
-                    }
-
-                    i+=2;
-
-                    while (question.charAt(i) != '"') {
-                        url.append(question.charAt(i));
-                        i+=1;
-                    }
-
-                    i+=3;
-                    try {
-                        URLs.add(new URL(url.toString()));
-                    } catch (MalformedURLException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }
-            else {
-                drawnQuestion.append(question.charAt(i));
-            }
+        for (BufferedImage image : question.getImages()) {
+            graphics.drawImage(Utils.resizeImage(image, TEXT_WIDTH, Jeopardy.WIN_HEIGHT - (TEXT_Y + TEXT_HEIGHT))
+                    , null, TEXT_X, TEXT_Y + TEXT_HEIGHT);
         }
-
-        String extraInfo = "arget=\"\"_blank\"\">";
-
-        if (drawnQuestion.toString().contains(extraInfo)) {
-            drawnQuestion = new StringBuilder(drawnQuestion.toString().replaceAll(extraInfo, ""));
-        }
-
-        for (URL url : URLs) {
-            // TODO: Handle more than one image
-            if (url.getPath().contains("jpg")) { // Image
-                try {
-                    graphics.drawImage(Utils.resizeImage(ImageIO.read(url), TEXT_WIDTH, Jeopardy.WIN_HEIGHT - (TEXT_Y + TEXT_HEIGHT))
-                            , null, TEXT_X, TEXT_Y + TEXT_HEIGHT);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-
-            else if (url.getPath().contains("wmv")) { // audio
-
-            }
-        }
-
-        Utils.drawCenteredString(graphics, Utils.stripDoubleQuotes(drawnQuestion.toString()), textLocation, Color.WHITE, 50);
+        Utils.drawCenteredString(graphics, question.getQuestion(), textLocation, Color.WHITE, 50);
     }
 
     private void answerSubmit(String guess) {

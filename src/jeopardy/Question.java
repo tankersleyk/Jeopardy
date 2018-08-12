@@ -1,10 +1,16 @@
 package jeopardy;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 /**
  * A Jeopardy! question
@@ -15,9 +21,10 @@ public class Question {
     private final Round round;
     private final String category;
     private final Calendar date;
-    private final String question;
+    private String question;
     private final String answer;
     private final int points;
+    private List<BufferedImage> images;
     private static final Calendar pointChange = new GregorianCalendar(2001, 11, 26);
 
     /**
@@ -82,6 +89,58 @@ public class Question {
      */
     public int getPoints() {
         return this.points;
+    }
+
+    /**
+     * Update this question object to scan for links in its question and separate them from the question
+     * @return true iff the question's links (if there are any) can be properly read
+     * @effects the question associated with this object will have its links and html tags removed
+     */
+    public boolean checkLinks() {
+        images = new ArrayList<>();
+
+        int linkStart = question.indexOf("href=\"\"");
+        while (linkStart != -1) {
+            System.out.println(question);
+            linkStart+=7;
+            int linkEnd;
+            if (question.contains("target=")) {
+                linkEnd = question.indexOf("\"\" target=");
+            }
+            else {
+                linkEnd = question.indexOf("\"\">");
+            }
+            try {
+                URL url = new URL(question.substring(linkStart, linkEnd));
+                if (question.substring(linkStart, linkEnd).contains(".jpg")) { // j-archive stores all images as jpg's
+                    System.out.println(category);
+                    try {
+                        images.add(ImageIO.read(url));
+                    } catch (IOException e) {
+                        return false;
+                    }
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            question = question.replaceFirst("<a href=\\\"\\\"[^>]+>", "");
+            linkStart = question.indexOf("href=\"\"");
+        }
+        while (question.contains("<")) {
+            question = question.replaceAll("<[^>]+>", "");
+        }
+        return true;
+    }
+
+    /**
+     * Get the images from the links associated with this question, MUST FIRST CALL checkLinks()
+     * @return
+     */
+    public List<BufferedImage> getImages() {
+        if (this.images == null) {
+            throw new RuntimeException("must call checkLinks() before getting images");
+        }
+        return this.images;
     }
 
     /**

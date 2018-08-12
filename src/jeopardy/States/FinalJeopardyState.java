@@ -68,7 +68,9 @@ public class FinalJeopardyState extends BaseState{
         for (Question question : allQuestions) {
             i+=1;
             if (random.nextInt(i) == 0) {
-                this.question = question;
+                if (question.checkLinks()) { // TODO: check if final jeopardy questions ever have these
+                    this.question = question;
+                }
             }
         }
 

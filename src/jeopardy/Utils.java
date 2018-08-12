@@ -28,6 +28,7 @@ public final class Utils {
         articles.add("your");
         articles.add("his");
         articles.add("her");
+        articles.add("one");
     }
 
     /**
@@ -183,7 +184,6 @@ public final class Utils {
      * @return a new string that is the same as s with its articles removed
      */
     public static String stripArticles(String s) {
-
         String newString = s;
 
         for (String article : articles) {
@@ -193,5 +193,18 @@ public final class Utils {
         }
 
         return newString;
+    }
+
+    public static String stripDoubleQuotes(String s) {
+        StringBuilder newString = new StringBuilder();
+
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '"') {
+                i+=1;
+            }
+            newString.append(s.charAt(i));
+        }
+
+        return newString.toString();
     }
 }
