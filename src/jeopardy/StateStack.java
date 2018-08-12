@@ -46,7 +46,9 @@ public class StateStack {
      *  item in the stack to the topmost - StateStack MUST have a JPanel object
      */
     public synchronized static void render() {
-        states.peek().render(panel);
+        if (states.size() > 0) {
+            states.peek().render(panel);
+        }
     }
 
     /**
