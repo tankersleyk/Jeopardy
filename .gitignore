@@ -1,4 +1,7 @@
-data/**
+data/background.png
+data/questions.csv
+data/logo.png
+data/podium.png
 bin/**
 .settings/**
 .classpath
