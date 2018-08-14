@@ -17,10 +17,11 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
+import javax.swing.ToolTipManager;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 
 import jeopardy.GameButton;
@@ -33,8 +34,10 @@ public class SettingsState extends BaseState{
     private static SettingsState instance = null;
     private Map<GameButton, List<Component>> options;
     private List<GameButton> settings;
+    private GameButton activeSetting;
     private final GameButton backButton;
     private static final BufferedImage displayIcon;
+    private static final BufferedImage gameplayIcon;
 
     private static final String[] RESOLUTIONS = {
             "1280x720", "1024x768", "1366x768", "1920x1080"
@@ -47,6 +50,7 @@ public class SettingsState extends BaseState{
     static {
         try {
             displayIcon = ImageIO.read(new File("data/display.png"));
+            gameplayIcon = ImageIO.read(new File("data/gameplay.png"));
         }
         catch (IOException e) {
             throw new RuntimeException("Failed to read in logo");
@@ -65,9 +69,7 @@ public class SettingsState extends BaseState{
         };
 
         displayButton.setIcon(new ImageIcon(displayIcon));
-        displayButton.setHorizontalAlignment(SwingConstants.LEFT);
 
-        // TODO: figure out how to fix graphical glitch
         JComboBox resolutionBox = new JComboBox(RESOLUTIONS);
         resolutionBox.setBounds(new Rectangle(
                 displayButton.getX() + displayButton.getWidth() + SETTINGS_PADDING, displayButton.getY(), 300, 50
@@ -80,17 +82,47 @@ public class SettingsState extends BaseState{
         settings.add(displayButton);
         options.put(displayButton, Arrays.asList(resolutionBox));
 
+        GameButton gameplayButton = new GameButton(Jeopardy.WIN_WIDTH / 4, Jeopardy.WIN_HEIGHT / 4 + displayButton.getHeight() + SETTINGS_PADDING, 150, 50, Utils.BLUE, Color.WHITE, "\t Game", 20) {
+            @Override
+            public void isClicked() {
+            }
+        };
+
+        gameplayButton.setIcon(new ImageIcon(gameplayIcon));
+
+        List<Component> gameplaySettings = new ArrayList<>();
+
+        ToolTipManager.sharedInstance().setInitialDelay(0);
+
+        JCheckBox noGuess = new JCheckBox("Wrong answers lose money (singleplayer only)", true);
+        noGuess.setBounds(new Rectangle(Jeopardy.WIN_WIDTH / 4 + gameplayButton.getWidth() + SETTINGS_PADDING,
+                Jeopardy.WIN_HEIGHT / 4, 300, 50));
+        noGuess.setToolTipText("When enabled, you may forgo guessing by entering a blank answer");
+        noGuess.setForeground(Color.WHITE);
+        noGuess.setBackground(Utils.BLUE);
+        gameplaySettings.add(noGuess);
+
+        settings.add(gameplayButton);
+        options.put(gameplayButton,gameplaySettings);
+
         for (GameButton button : settings) {
+            button.setHorizontalAlignment(SwingConstants.LEFT);
             button.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(MouseEvent e) {
-                    backButton.setBackground(Utils.PURPLE);
+                    button.setBackground(Utils.PURPLE);
                 }
 
                 public void mouseExited(MouseEvent e) {
-                    backButton.setBackground(Utils.BLUE);
+                    button.setBackground(Utils.BLUE);
                 }
 
                 public void mouseClicked(MouseEvent e) {
+                    if (activeSetting != null) {
+                        for (Component component : options.get(activeSetting)) {
+                            StateStack.removeComponent(component);
+                        }
+                    }
+                    activeSetting = button;
                     for (Component component : options.get(button)) {
                         JPanel panel = StateStack.getPanel();
                         panel.add(component);
