@@ -207,4 +207,8 @@ public final class Utils {
 
         return newString.toString();
     }
+
+    public static void drawBackground(Graphics2D graphics) {
+        graphics.drawImage(Utils.resizeImage(Jeopardy.BACKGROUND, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT), null, 0, 0);
+    }
 }

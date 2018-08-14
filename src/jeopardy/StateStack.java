@@ -1,6 +1,7 @@
 package jeopardy;
 
 import java.awt.Component;
+import java.awt.Graphics2D;
 import java.util.Stack;
 
 import javax.swing.JPanel;
@@ -93,5 +94,15 @@ public class StateStack {
      */
     public static JPanel getPanel() {
         return StateStack.panel;
+    }
+
+    /**
+     * Repaint the graphics object associated with the panel this state stack is using
+     *
+     */
+    public static void repaint() {
+        if (states.size() > 0) {
+            states.peek().repaint((Graphics2D) panel.getGraphics());
+        }
     }
 }

@@ -2,6 +2,9 @@ package jeopardy;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +21,7 @@ import jeopardy.States.MainMenuState;
  */
 public class Jeopardy {
 
-//    private static Map<String, Boolean> settings;
+    //    private static Map<String, Boolean> settings;
     public static final BufferedImage BACKGROUND;
 
     static {
@@ -39,6 +42,7 @@ public class Jeopardy {
     /**
      * Handle the game meta information, including player's settings and server connection
      */
+    @SuppressWarnings("serial")
     public static void main(String[] args) {
 
         // Set up the window
@@ -46,7 +50,7 @@ public class Jeopardy {
             @Override
             public void repaint() {
                 super.repaint();
-                StateStack.render();
+                StateStack.repaint();
             }
             @Override
             public void paint(Graphics g) {
@@ -58,7 +62,19 @@ public class Jeopardy {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Set up the graphics
-        drawingArea = new JPanel();
+        drawingArea = new JPanel() {
+            @Override
+            public void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Utils.drawBackground((Graphics2D) g);
+            }
+            @Override
+            public Point getToolTipLocation(MouseEvent e) {
+                Point p = e.getPoint();
+                p.y+=15;
+                return p;
+            }
+        };
         drawingArea.setLayout(null);
         drawingArea.setPreferredSize(new Dimension(WIN_WIDTH, WIN_HEIGHT));
 

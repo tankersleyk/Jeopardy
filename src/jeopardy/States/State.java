@@ -49,4 +49,10 @@ public interface State {
      */
     public void returnToState();
 
+    /**
+     * Redraw the graphics associated with this state
+     * @param graphcis the graphics object to draw onto
+     */
+    public void repaint(Graphics2D graphics);
+
 }
