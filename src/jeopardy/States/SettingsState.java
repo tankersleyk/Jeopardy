@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -78,6 +80,8 @@ public class SettingsState extends BaseState{
         resolutionBox.setUI(new BasicComboBoxUI());
         resolutionBox.setBackground(Utils.BLUE);
         resolutionBox.setForeground(Color.WHITE);
+        resolutionBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+        resolutionBox.setFocusable(false);
 
         settings.add(displayButton);
         options.put(displayButton, Arrays.asList(resolutionBox));
@@ -94,12 +98,24 @@ public class SettingsState extends BaseState{
 
         ToolTipManager.sharedInstance().setInitialDelay(0);
 
-        JCheckBox noGuess = new JCheckBox("Wrong answers lose money (singleplayer only)", true);
+        JCheckBox noGuess = new JCheckBox("Wrong answers lose money (singleplayer only)", Boolean.parseBoolean(Jeopardy.SETTINGS.getProperty("noGuess")));
         noGuess.setBounds(new Rectangle(Jeopardy.WIN_WIDTH / 4 + gameplayButton.getWidth() + SETTINGS_PADDING,
                 Jeopardy.WIN_HEIGHT / 4, 300, 50));
         noGuess.setToolTipText("When enabled, you may forgo guessing by entering a blank answer");
         noGuess.setForeground(Color.WHITE);
         noGuess.setBackground(Utils.BLUE);
+        noGuess.setFocusable(false);
+
+        noGuess.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                Jeopardy.SETTINGS.setProperty("noGuess", Boolean.toString(noGuess.isSelected()));
+                System.out.println(Jeopardy.SETTINGS.getProperty("noGuess"));
+            }
+
+        });
+
         gameplaySettings.add(noGuess);
 
         settings.add(gameplayButton);

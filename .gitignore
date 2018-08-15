@@ -2,6 +2,7 @@ data/background.png
 data/questions.csv
 data/logo.png
 data/podium.png
+data/config.properties
 bin/**
 .settings/**
 .classpath

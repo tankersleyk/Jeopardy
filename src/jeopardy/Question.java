@@ -12,6 +12,8 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import sun.audio.AudioStream;
+
 /**
  * A Jeopardy! question
  *
@@ -25,6 +27,7 @@ public class Question {
     private final String answer;
     private final int points;
     private List<BufferedImage> images;
+    private List<AudioStream> sounds;
     private static final Calendar pointChange = new GregorianCalendar(2001, 11, 26);
 
     /**
@@ -101,7 +104,6 @@ public class Question {
 
         int linkStart = question.indexOf("href=\"\"");
         while (linkStart != -1) {
-            System.out.println(question);
             linkStart+=7;
             int linkEnd;
             if (question.contains("target=")) {
@@ -113,9 +115,17 @@ public class Question {
             try {
                 URL url = new URL(question.substring(linkStart, linkEnd));
                 if (question.substring(linkStart, linkEnd).contains(".jpg")) { // j-archive stores all images as jpg's
-                    System.out.println(category);
                     try {
                         images.add(ImageIO.read(url));
+                    } catch (IOException e) {
+                        return false;
+                    }
+                }
+                else if (question.substring(linkStart, linkEnd).contains(".mp3")) {
+                    try {
+                        AudioStream audio = new AudioStream(url.openStream());
+                        sounds.add(audio);
+                        System.out.println(category);
                     } catch (IOException e) {
                         return false;
                     }

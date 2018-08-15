@@ -7,7 +7,12 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -21,12 +26,33 @@ import jeopardy.States.MainMenuState;
  */
 public class Jeopardy {
 
-    //    private static Map<String, Boolean> settings;
+    public static final Properties SETTINGS;
     public static final BufferedImage BACKGROUND;
+
+
 
     static {
         try {
             BACKGROUND = ImageIO.read(new File("data/background.png"));
+            SETTINGS = new Properties();
+
+            try {
+                InputStream input = new FileInputStream("data/config.properties");
+                SETTINGS.load(input);
+            }
+            catch (IOException e) {
+                SETTINGS.setProperty("noGuess", "true");
+                OutputStream output;
+                try {
+                    output = new FileOutputStream("data/config.properties");
+                    SETTINGS.store(output, null);
+                    output.close();
+                    System.out.println(":)");
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
         }
         catch (IOException e) {
             throw new RuntimeException("Failed to read in background image");
@@ -81,6 +107,8 @@ public class Jeopardy {
         window.add(drawingArea);
         window.pack();
         window.setVisible(true);
+
+
 
         StateStack.changePanel(drawingArea);
         StateStack.push(MainMenuState.getInstance());
