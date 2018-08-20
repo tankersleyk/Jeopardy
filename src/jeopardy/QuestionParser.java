@@ -33,7 +33,6 @@ public class QuestionParser {
 
         while ((st = br.readLine()) != null) {
             List<String> info = Arrays.asList(st.split(",(?=(?:[^\\\"]*\\\"[^\\\"]*\\\")*[^\\\"]*$)")); // Split on commas, but not within quotes
-            int showNumber = Integer.parseInt(info.get(0));
             String dateString = info.get(1);
 
             List<String> dateInfo = Arrays.asList(dateString.split("-"));

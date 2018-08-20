@@ -63,7 +63,9 @@ public class NormalRoundState extends BaseState{
             allQuestions = QuestionParser.parse(questionFile, round);
         } catch (IOException e) {
             System.err.println("Could not read in questions");
-            allQuestions = new ArrayList<>();
+            StateStack.pop();
+            StateStack.push(MainMenuState.getInstance());
+            return;
         }
         Set<String> categories = new HashSet<>();
         for (Question q : allQuestions) {
