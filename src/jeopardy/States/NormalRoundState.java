@@ -250,7 +250,7 @@ public class NormalRoundState extends BaseState{
         Random random = new Random();
 
         for (Question question : questions) {
-            if (question.getCategory().equals(category) && randomMap.containsKey(question.getPoints())) {
+            if (question.getCategory().equals(category) && randomMap.containsKey(question.getPoints()) && question.checkLinks()) {
                 int points = question.getPoints();
                 randomMap.put(points, randomMap.get(points) + 1);
                 if (random.nextInt(randomMap.get(points)) == 0) { // swap with probability 1/i,
@@ -273,7 +273,7 @@ public class NormalRoundState extends BaseState{
         if (replaceValue != 0) {
             for (Question question : questions) {
                 // Not already present, and is matching category
-                if (!pulledQuestions.values().contains(question) && question.getCategory().equals(category)) {
+                if (!pulledQuestions.values().contains(question) && question.getCategory().equals(category) && question.checkLinks()) {
                     // Will add question assuming its missing value - will not be accurate 100% of the time, but close enough
                     pulledQuestions.put(replaceValue, question);
                     break;
