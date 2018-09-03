@@ -21,7 +21,7 @@ public class QuestionParser {
     /**
      * Parses a csv file of jeopardy questions
      * @param file the csv file to be parsed
-     * @param round the game round to get questions from
+     * @param gameRound the game round to get questions from
      * @return the list of Questions in the file that much the given round
      * @throws IOException if the file could not be read
      */

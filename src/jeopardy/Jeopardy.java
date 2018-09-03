@@ -108,8 +108,6 @@ public class Jeopardy {
         window.pack();
         window.setVisible(true);
 
-
-
         StateStack.changePanel(drawingArea);
         StateStack.push(MainMenuState.getInstance());
     }

@@ -53,42 +53,48 @@ public class Question {
     }
 
     /**
-     * TODO
+     * Get the round (Jeopardy, Double, Final) that this question is from
+     * @return the round this question is originally from
      */
     public Round getRound() {
         return this.round;
     }
 
     /**
-     * TODO
+     * Get the category that this question is from
+     * @return the category this quesiton is associated with
      */
     public String getCategory() {
         return this.category;
     }
 
     /**
-     * TODO
+     * Get the date that this question originally aired
+     * @return the date of the original air of the Jeopardy! show this question is from
      */
     public Date getDate() {
         return this.date.getTime();
     }
 
     /**
-     * TODO
+     * Get the question to be asked
+     * @return the actual question to be asked
      */
     public String getQuestion() {
         return this.question;
     }
 
     /**
-     * TODO
+     * Get the answer to this question
+     * @return the answer to the question returned by getQuestion
      */
     public String getAnswer() {
         return this.answer;
     }
 
     /**
-     * TODO
+     * Get the value this question is worth
+     * @return the amount (in dollars) of money this question was worth on its original air of Jeopardy
      */
     public int getPoints() {
         return this.points;
@@ -139,12 +145,15 @@ public class Question {
         while (question.contains("<")) {
             question = question.replaceAll("<[^>]+>", "");
         }
+        if (question.toLowerCase().contains("seen here") && images.size() == 0) {
+            return false;
+        }
         return true;
     }
 
     /**
      * Get the images from the links associated with this question, MUST FIRST CALL checkLinks()
-     * @return
+     * @return the images associated with this question
      */
     public List<BufferedImage> getImages() {
         if (this.images == null) {
@@ -159,7 +168,7 @@ public class Question {
      * @return true iff the guess is an acceptable answer to this question
      */
     public Boolean acceptAnswer(String guess) {
-        // TODO: numbers numerical vs written out, difference in how parentheses at start vs. end are handled in jeopardy answers?
+        // TODO: numbers numerical vs written out, and/&
         String strippedGuess = Utils.stripSymbols(Utils.stripArticles(guess.toLowerCase()));
         String noArticles = Utils.stripArticles(answer.toLowerCase());
         String strippedAnswer = Utils.stripSymbols(noArticles);
