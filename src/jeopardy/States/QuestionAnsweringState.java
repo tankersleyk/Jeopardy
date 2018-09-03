@@ -69,7 +69,8 @@ public class QuestionAnsweringState extends BaseState{
                 int keyCode = arg0.getKeyCode();
                 if (keyCode == Utils.ENTER_KEY && hasEntered) {
                     String guess = answerField.getText();
-                    if (guess.length() > 0 || !question.getRound().equals(Round.FINAL_JEOPARDY)) // in final jeopardy, must submit an answer
+                    // in final jeopardy, must submit an answer no matter what
+                    if (guess.length() > 0 || (Boolean.parseBoolean(Jeopardy.SETTINGS.getProperty("noGuess")) && !question.getRound().equals(Round.FINAL_JEOPARDY))) 
                         answerSubmit(guess);
                 }
             }
@@ -130,7 +131,7 @@ public class QuestionAnsweringState extends BaseState{
         String correctnessString;
         Color correctnessColor;
 
-        if (guess.length() == 0) {
+        if (guess.length() == 0 && Boolean.parseBoolean(Jeopardy.SETTINGS.getProperty("noGuess"))) {
             correctnessString = "Did not guess";
             correctnessColor = Color.YELLOW;
         }
@@ -141,7 +142,9 @@ public class QuestionAnsweringState extends BaseState{
                 correctnessColor = Color.GREEN;
             }
             else {
-                player.subtractMoney(value);
+                if (Boolean.parseBoolean(Jeopardy.SETTINGS.getProperty("noGuess")) || question.getRound() == Round.FINAL_JEOPARDY) {
+                    player.subtractMoney(value);
+                }
                 correctnessString = "Incorrect";
                 correctnessColor = Color.RED;
             }
