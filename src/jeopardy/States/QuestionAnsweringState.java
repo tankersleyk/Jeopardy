@@ -106,17 +106,25 @@ public class QuestionAnsweringState extends BaseState{
         answerField.repaint();
 
         graphics.drawImage(Utils.resizeImage(Jeopardy.BACKGROUND, Jeopardy.WIN_WIDTH, Jeopardy.WIN_HEIGHT), null, 0, 0);
-        Rectangle2D textLocation = new Rectangle2D.Double(
+
+        Rectangle2D categoryLocation = new Rectangle2D.Double(
+                25,
                 0,
-                0,
-                Jeopardy.WIN_WIDTH,
-                Jeopardy.WIN_HEIGHT / 2 - TEXT_HEIGHT / 2 + Jeopardy.WIN_HEIGHT / (TEXT_HEIGHT / 2));
+                Jeopardy.WIN_WIDTH - 25,
+                Jeopardy.WIN_HEIGHT / 8
+                );
+        Rectangle2D questionLocation = new Rectangle2D.Double(
+                50,
+                Jeopardy.WIN_HEIGHT / 8,
+                Jeopardy.WIN_WIDTH - 50,
+                Jeopardy.WIN_HEIGHT / 2 - TEXT_HEIGHT / 2 - Jeopardy.WIN_HEIGHT / 8 + Jeopardy.WIN_HEIGHT / (TEXT_HEIGHT / 2));
 
         for (BufferedImage image : question.getImages()) {
             graphics.drawImage(Utils.resizeImage(image, TEXT_WIDTH, Jeopardy.WIN_HEIGHT - (TEXT_Y + TEXT_HEIGHT))
                     , null, TEXT_X, TEXT_Y + TEXT_HEIGHT);
         }
-        Utils.drawCenteredString(graphics, question.getQuestion(), textLocation, Color.WHITE, 50);
+        Utils.drawCenteredString(graphics, question.getCategory(), categoryLocation, Color.WHITE, 30);
+        Utils.drawCenteredString(graphics, question.getQuestion(), questionLocation, Color.WHITE, 50);
     }
 
     private void answerSubmit(String guess) {
