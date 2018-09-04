@@ -18,6 +18,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.sun.scenario.Settings;
+
 import jeopardy.States.MainMenuState;
 
 /**
@@ -28,8 +30,7 @@ public class Jeopardy {
 
     public static final Properties SETTINGS;
     public static final BufferedImage BACKGROUND;
-
-
+    //    private static final File SETTINGS_FILE;
 
     static {
         try {
@@ -42,12 +43,12 @@ public class Jeopardy {
             }
             catch (IOException e) {
                 SETTINGS.setProperty("noGuess", "true");
+                SETTINGS.setProperty("Resolution", "1280x720");
                 OutputStream output;
                 try {
                     output = new FileOutputStream("data/config.properties");
                     SETTINGS.store(output, null);
                     output.close();
-                    System.out.println(":)");
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -70,6 +71,13 @@ public class Jeopardy {
      */
     @SuppressWarnings("serial")
     public static void main(String[] args) {
+
+        String[] splitResolution = SETTINGS.getProperty("Resolution").split("x");
+        int width = Integer.parseInt(splitResolution[0]);
+        int height = Integer.parseInt(splitResolution[1]);
+
+        WIN_WIDTH = width;
+        WIN_HEIGHT = height;
 
         // Set up the window
         window = new JFrame("Jeopardy") {
@@ -117,5 +125,18 @@ public class Jeopardy {
         WIN_HEIGHT = height;
         drawingArea.setPreferredSize(new Dimension(WIN_WIDTH, WIN_HEIGHT));
         window.pack();
+        changeSettings("Resolution", width +"x" + height);
+    }
+
+    public static void changeSettings(String key, String value) {
+        SETTINGS.setProperty(key, value);
+        OutputStream output;
+        try {
+            output = new FileOutputStream("data/config.properties");
+            SETTINGS.store(output, null);
+            output.close();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
     }
 }

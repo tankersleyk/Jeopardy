@@ -83,6 +83,9 @@ public class SettingsState extends BaseState{
         resolutionBox.setAlignmentX(Component.CENTER_ALIGNMENT);
         resolutionBox.setFocusable(false);
 
+        // TODO: allow support for arbitrary resolutions
+        resolutionBox.setSelectedItem(Jeopardy.SETTINGS.getProperty("Resolution"));
+
         settings.add(displayButton);
         options.put(displayButton, Arrays.asList(resolutionBox));
 
@@ -110,8 +113,7 @@ public class SettingsState extends BaseState{
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                Jeopardy.SETTINGS.setProperty("noGuess", Boolean.toString(noGuess.isSelected()));
-                System.out.println(Jeopardy.SETTINGS.getProperty("noGuess"));
+                Jeopardy.changeSettings("noGuess", Boolean.toString(noGuess.isSelected()));
             }
 
         });
